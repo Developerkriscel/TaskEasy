@@ -59,7 +59,7 @@ export default function AdminPage() {
     { key: 'name', header: 'Name', sortable: true },
     { key: 'email', header: 'Email', sortable: true },
     { key: 'role', header: 'Role', render: (v) => (
-      <span className="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">{v}</span>
+      <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">{v}</span>
     )},
     { key: 'employeeId', header: 'Employee ID', render: (v) => v ?? '—' },
     { key: 'status', header: 'Status', render: (v) => <StatusBadge status={v} /> },
@@ -70,7 +70,7 @@ export default function AdminPage() {
         <div className="flex gap-1">
           <button
             onClick={() => { setUserModal(row); }}
-            className="rounded p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+            className="rounded p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
           >
             <Pencil className="h-4 w-4" />
           </button>
@@ -133,16 +133,16 @@ export default function AdminPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2">
-        <Settings className="h-5 w-5 text-indigo-500" />
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Admin Settings</h1>
+        <Settings className="h-5 w-5 text-orange-500" />
+        <h1 className="text-xl font-bold font-display text-foreground">Admin Panel</h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-700">
+      <div className="flex border-b border-border">
         {(['users', 'projects'] as AdminTab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-5 py-2.5 text-sm font-medium border-b-2 capitalize transition-colors ${
-              tab === t ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              tab === t ? 'border-blue-500 text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-900/20' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}>
             Manage {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -212,7 +212,7 @@ export default function AdminPage() {
           <Input label="Description (optional)" {...registerProject('description')} />
           <div className="flex items-center gap-3">
             <Input type="color" label="Color Tag" className="h-9 w-12 p-1" {...registerProject('color')} />
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-5">Pick a colour to identify this project</p>
+            <p className="text-xs text-muted-foreground mt-5">Pick a colour to identify this project</p>
           </div>
         </form>
       </Modal>

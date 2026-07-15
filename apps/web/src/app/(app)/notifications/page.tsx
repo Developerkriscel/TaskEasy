@@ -18,7 +18,7 @@ export default function NotificationsPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Notifications</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Notifications</h1>
           {unread.length > 0 && (
             <span className="rounded-full bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5">
               {unread.length} unread
@@ -33,18 +33,18 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow divide-y divide-slate-100 dark:divide-slate-800">
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="px-5 py-4 space-y-2">
-              <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-3/4" />
-              <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-1/2" />
+              <div className="h-4 bg-surface-muted rounded animate-pulse w-3/4" />
+              <div className="h-3 bg-surface-muted rounded animate-pulse w-1/2" />
             </div>
           ))
         ) : notifications.length === 0 ? (
           <div className="py-16 text-center">
             <Bell className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" />
-            <p className="text-sm text-slate-500 dark:text-slate-400">No notifications yet</p>
+            <p className="text-sm text-muted-foreground">No notifications yet</p>
           </div>
         ) : (
           notifications.map((n) => (
@@ -63,9 +63,9 @@ export default function NotificationsPage() {
                   <span className="mt-1.5 h-2 w-2 rounded-full bg-indigo-500 flex-shrink-0" />
                 )}
                 <div className={cn('flex-1', n.isRead && 'ml-5')}>
-                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{n.body}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{timeAgo(n.createdAt)}</p>
+                  <p className="text-sm font-medium text-foreground font-display">{n.title}</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">{n.body}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{timeAgo(n.createdAt)}</p>
                 </div>
               </div>
             </div>

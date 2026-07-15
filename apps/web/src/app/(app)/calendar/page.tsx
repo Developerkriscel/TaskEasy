@@ -16,13 +16,13 @@ interface CalendarEvent {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  DELEGATION: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
-  WORK_REQUEST: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
-  CHECKLIST: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-  FMS: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
-  HOLIDAY: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-  BIRTHDAY: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300',
-  ANNIVERSARY: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+  DELEGATION: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  WORK_REQUEST: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+  CHECKLIST: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+  FMS: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  HOLIDAY: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+  BIRTHDAY: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+  ANNIVERSARY: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
 };
 
 function getDaysInMonth(year: number, month: number) {
@@ -126,13 +126,13 @@ export default function CalendarPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <CalendarDays className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Calendar</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Calendar</h1>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <span className="font-semibold text-slate-700 dark:text-slate-300 w-36 text-center">
+          <span className="font-semibold text-foreground w-36 text-center">
             {monthName} {year}
           </span>
           <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
@@ -150,10 +150,10 @@ export default function CalendarPage() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-surface overflow-hidden">
-        <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
+      <div className="rounded-2xl border border-border bg-surface overflow-hidden">
+        <div className="grid grid-cols-7 border-b border-border">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-            <div key={d} className="py-2 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">{d}</div>
+            <div key={d} className="py-2 text-center text-xs font-semibold text-muted-foreground">{d}</div>
           ))}
         </div>
 
@@ -178,7 +178,7 @@ export default function CalendarPage() {
                   }`}
                 >
                   <div className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
-                    isToday ? 'bg-indigo-600 text-contrast' : 'text-slate-700 dark:text-slate-300'
+                    isToday ? 'bg-indigo-600 text-contrast' : 'text-foreground'
                   }`}>
                     {day}
                   </div>
@@ -193,7 +193,7 @@ export default function CalendarPage() {
                       </div>
                     ))}
                     {dayEvents.length > 3 && (
-                      <div className="text-xs text-slate-500 dark:text-slate-400 pl-1">+{dayEvents.length - 3} more</div>
+                      <div className="text-xs text-muted-foreground pl-1">+{dayEvents.length - 3} more</div>
                     )}
                   </div>
                 </div>

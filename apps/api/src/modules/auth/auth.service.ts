@@ -147,7 +147,7 @@ export class AuthService {
     // Issue tokens
     const role = normalizeCompanyRole(user.role);
     const permissions = resolvePermissions(role, user.permissions);
-    const tokens = await this.issueTokens(user.id, user.tenantId, user.email, role, permissions);
+    const tokens = await this.issueTokens(user.id, user.tenantId, user.email, role, permissions, userAgent, ipAddress);
 
     return {
       ...tokens,
@@ -201,7 +201,7 @@ export class AuthService {
 
     const role = normalizeCompanyRole(user.role);
     const permissions = resolvePermissions(role, user.permissions);
-    const tokens = await this.issueTokens(user.id, user.tenantId, user.email, role, permissions);
+    const tokens = await this.issueTokens(user.id, user.tenantId, user.email, role, permissions, userAgent, ipAddress);
 
     return {
       ...tokens,
@@ -491,6 +491,8 @@ export class AuthService {
     email: string,
     role: string,
     permissions: string[],
+    deviceInfo?: string,
+    ipAddress?: string,
   ) {
     const payload = { sub: userId, tenantId, email, role, permissions };
 
@@ -522,6 +524,8 @@ export class AuthService {
         userId,
         tokenHash,
         expiresAt: new Date(Date.now() + refreshExpiryMs),
+        deviceInfo,
+        ipAddress,
       },
     });
 

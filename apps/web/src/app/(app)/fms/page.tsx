@@ -61,10 +61,10 @@ function StatCard({
   label, value, sub, color,
 }: { label: string; value: number | string; sub?: string; color: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
+    <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow p-4">
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{sub}</p>}
+      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -471,7 +471,7 @@ export default function FmsPage() {
     <div className="space-y-5">
 
       {/* Tabs + actions */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+      <div className="flex items-center justify-between border-b border-border">
         <div className="flex">
           {tabs.map((t) => (
             <button
@@ -479,7 +479,7 @@ export default function FmsPage() {
               onClick={() => setTab(t.key)}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                 tab === t.key
-                  ? 'border-indigo-600 text-indigo-600'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-900/20'
                   : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }`}
             >
@@ -492,13 +492,13 @@ export default function FmsPage() {
             <div ref={headerMenuRef} className="relative">
               <button
                 onClick={() => setShowHeaderMenu((v) => !v)}
-                className="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-medium text-foreground shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <MoreVertical className="h-4 w-4" />
                 Actions
               </button>
               {showHeaderMenu && (
-                <div className="absolute right-0 top-full mt-1.5 z-50 min-w-[170px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg py-1 overflow-hidden">
+                <div className="absolute right-0 top-full mt-1.5 z-50 min-w-[170px] rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow shadow-lg py-1 overflow-hidden">
                   {[
                     { icon: <Upload className="h-3.5 w-3.5" />, label: 'Import Sheet', onClick: () => { setShowImport(true); setShowHeaderMenu(false); } },
                     { icon: <BarChart2 className="h-3.5 w-3.5" />, label: 'Analytics', onClick: () => { setShowAnalytics(true); setShowHeaderMenu(false); } },
@@ -507,9 +507,9 @@ export default function FmsPage() {
                     <button
                       key={item.label}
                       onClick={item.onClick}
-                      className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
-                      <span className="text-slate-400 dark:text-slate-500">{item.icon}</span>
+                      <span className="text-muted-foreground">{item.icon}</span>
                       {item.label}
                     </button>
                   ))}
@@ -630,15 +630,15 @@ export default function FmsPage() {
         }
       >
         <div className="space-y-4">
-          <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-4 text-center">
+          <div className="rounded-lg border border-dashed border-border p-4 text-center">
             <Upload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
               Select a CSV file with columns:<br />
-              <code className="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">
+              <code className="text-xs bg-surface-muted px-1 py-0.5 rounded">
                 workflowName, stepTitle, stepNo, assigneeEmail, plannedDate, what, how, formLink
               </code>
               <br />
-              <span className="text-xs text-slate-500 dark:text-slate-400">plannedDate must be YYYY-MM-DD</span>
+              <span className="text-xs text-muted-foreground">plannedDate must be YYYY-MM-DD</span>
             </p>
             <input
               ref={fileRef}
@@ -656,8 +656,8 @@ export default function FmsPage() {
           </div>
 
           {importRows.length > 0 && !importResult && (
-            <div className="text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
-              <p className="font-medium text-slate-800 dark:text-slate-200 mb-1">
+            <div className="text-sm text-slate-600 dark:text-slate-400 bg-surface-muted/50 rounded-lg p-3">
+              <p className="font-medium text-foreground font-display mb-1">
                 Preview — {importRows.length} row(s) ready to import
               </p>
               <p className="text-xs">First row: {JSON.stringify(importRows[0])}</p>
@@ -666,7 +666,7 @@ export default function FmsPage() {
 
           {importResult && (
             <div className={`rounded-lg p-4 ${importResult.errors.length > 0 ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700' : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'}`}>
-              <p className="font-medium text-sm text-slate-800 dark:text-slate-200">
+              <p className="font-medium text-sm text-foreground font-display">
                 ✅ Imported {importResult.created} step(s) successfully
               </p>
               {importResult.errors.length > 0 && (
@@ -726,19 +726,19 @@ export default function FmsPage() {
           {selectedWorkflowId && (
             <>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <StatCard label="Total Steps" value={monitorTasks.length} color="text-slate-800 dark:text-slate-100" />
+                <StatCard label="Total Steps" value={monitorTasks.length} color="text-foreground" />
                 <StatCard label="Completed" value={completedCount} color="text-green-600" />
                 <StatCard label="Pending" value={pendingCount} color="text-amber-600" />
                 <StatCard label="Late" value={lateCount} color="text-red-600" />
               </div>
 
-              <div className="rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="rounded-lg border border-border">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-4 py-3 dark:border-slate-700">
                   <div>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    <p className="text-sm font-semibold text-foreground">
                       {selectedWorkflow?.name ?? 'Selected workflow'}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted-foreground">
                       {selectedWorkflow?.description || 'Execution steps and task ownership'}
                     </p>
                   </div>
@@ -746,7 +746,7 @@ export default function FmsPage() {
                 </div>
 
                 {monitorPendingLoading || monitorCompletedLoading ? (
-                  <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">Loading workflow steps...</div>
+                  <div className="py-10 text-center text-sm text-muted-foreground">Loading workflow steps...</div>
                 ) : monitorTasks.length > 0 ? (
                   <div className="max-h-80 overflow-auto">
                     <table className="min-w-full divide-y divide-slate-100 text-sm dark:divide-slate-800">
@@ -764,10 +764,10 @@ export default function FmsPage() {
                         {monitorTasks.map((task) => (
                           <tr key={task.id}>
                             <td className="px-4 py-2 text-slate-500">{task.stepNo}</td>
-                            <td className="px-4 py-2 font-medium text-slate-800 dark:text-slate-100">{task.title}</td>
-                            <td className="px-4 py-2 text-slate-600 dark:text-slate-300">{task.assignedTo?.name ?? '—'}</td>
-                            <td className="px-4 py-2 text-slate-600 dark:text-slate-300">{formatDate(task.plannedDate)}</td>
-                            <td className="px-4 py-2 text-slate-600 dark:text-slate-300">{task.actualDate ? formatDate(task.actualDate) : '—'}</td>
+                            <td className="px-4 py-2 font-medium text-foreground">{task.title}</td>
+                            <td className="px-4 py-2 text-muted-foreground">{task.assignedTo?.name ?? '—'}</td>
+                            <td className="px-4 py-2 text-muted-foreground">{formatDate(task.plannedDate)}</td>
+                            <td className="px-4 py-2 text-muted-foreground">{task.actualDate ? formatDate(task.actualDate) : '—'}</td>
                             <td className="px-4 py-2"><StatusBadge status={task.status} /></td>
                           </tr>
                         ))}
@@ -775,7 +775,7 @@ export default function FmsPage() {
                     </table>
                   </div>
                 ) : (
-                  <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">No execution steps found for this workflow</div>
+                  <div className="py-10 text-center text-sm text-muted-foreground">No execution steps found for this workflow</div>
                 )}
               </div>
             </>
@@ -792,11 +792,11 @@ export default function FmsPage() {
         footer={<Button onClick={() => setShowAnalytics(false)}>Close</Button>}
       >
         {analyticsLoading ? (
-          <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">Loading analytics…</div>
+          <div className="py-10 text-center text-sm text-muted-foreground">Loading analytics…</div>
         ) : analyticsData ? (
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard label="Total Tasks" value={analyticsData.total} color="text-slate-800 dark:text-slate-100" />
+              <StatCard label="Total Tasks" value={analyticsData.total} color="text-foreground" />
               <StatCard label="Completed" value={analyticsData.completed} color="text-green-600" />
               <StatCard label="Pending" value={analyticsData.pending} color="text-amber-600" />
               <StatCard label="Late" value={analyticsData.late} color="text-red-600" />
@@ -819,11 +819,11 @@ export default function FmsPage() {
 
             {analyticsData.workflows.length > 0 && (
               <div>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Workflows</p>
-                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <p className="text-sm font-medium text-foreground mb-2">Workflows</p>
+                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-lg border border-border overflow-hidden">
                   {analyticsData.workflows.map((wf) => (
-                    <div key={wf.id} className="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-slate-900">
-                      <span className="text-sm text-slate-700 dark:text-slate-300">{wf.name}</span>
+                    <div key={wf.id} className="flex items-center justify-between px-4 py-2.5 bg-surface">
+                      <span className="text-sm text-foreground">{wf.name}</span>
                       <StatusBadge status={wf.status} />
                     </div>
                   ))}
@@ -832,7 +832,7 @@ export default function FmsPage() {
             )}
           </div>
         ) : (
-          <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">No analytics data</div>
+          <div className="py-10 text-center text-sm text-muted-foreground">No analytics data</div>
         )}
       </Modal>
 
@@ -863,7 +863,7 @@ export default function FmsPage() {
           <div className="space-y-5">
             {/* Flow Name */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Flow Name</label>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Flow Name</label>
               <Input
                 placeholder="e.g. Purchase Approval Flow"
                 value={aiFlowName}
@@ -873,16 +873,16 @@ export default function FmsPage() {
             </div>
 
             {/* Configuration section */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 space-y-3">
+            <div className="rounded-xl border border-border p-4 space-y-3">
               {/* Header */}
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <span className="text-sm font-semibold text-foreground">
                   Configuration (Data Source + Form Fields)
                 </span>
                 <select
                   value={aiConfigMode}
                   onChange={(e) => setAiConfigMode(e.target.value as 'Manual' | 'Sheet')}
-                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500"
+                  className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground outline-none focus:border-indigo-500"
                 >
                   <option value="Manual">Manual</option>
                   <option value="Sheet">Sheet</option>
@@ -894,7 +894,7 @@ export default function FmsPage() {
                 <select
                   value={aiSelectedConfig}
                   onChange={(e) => handleSelectConfig(e.target.value)}
-                  className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-500 dark:text-slate-400 outline-none focus:border-indigo-500"
+                  className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-600 bg-surface px-3 py-2 text-sm text-muted-foreground outline-none focus:border-indigo-500"
                 >
                   <option value="">Select saved sheet configuration</option>
                   {aiSavedConfigs.map((cfg) => (
@@ -958,11 +958,11 @@ export default function FmsPage() {
 
               {/* Fields table */}
               {aiFields.length === 0 ? (
-                <p className="text-sm text-slate-500 dark:text-slate-400">No fields configured yet.</p>
+                <p className="text-sm text-muted-foreground">No fields configured yet.</p>
               ) : (
-                <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="overflow-x-auto rounded-lg border border-border">
                   <table className="w-full text-sm">
-                    <thead className="bg-slate-50 dark:bg-slate-800">
+                    <thead className="bg-surface-muted">
                       <tr>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Label</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase w-32">Type</th>
@@ -973,20 +973,20 @@ export default function FmsPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                       {aiFields.map((field, i) => (
-                        <tr key={i} className="bg-white dark:bg-slate-900">
+                        <tr key={i} className="bg-surface">
                           <td className="px-2 py-1.5">
                             <input
                               value={field.label}
                               onChange={(e) => handleFieldProp(i, 'label', e.target.value)}
                               placeholder={`Field ${i + 1}`}
-                              className="w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-sm text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-400"
+                              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground outline-none focus:border-indigo-400"
                             />
                           </td>
                           <td className="px-2 py-1.5">
                             <select
                               value={field.type}
                               onChange={(e) => handleFieldProp(i, 'type', e.target.value)}
-                              className="w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-sm text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-400"
+                              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground outline-none focus:border-indigo-400"
                             >
                               {['text', 'number', 'date', 'checkbox', 'dropdown', 'textarea'].map((t) => (
                                 <option key={t} value={t}>{t}</option>
@@ -1048,9 +1048,9 @@ export default function FmsPage() {
                       {aiSelectedRow !== null ? `Row ${aiSelectedRow + 1} selected` : 'No row selected'}
                     </span>
                   </div>
-                  <div className="overflow-x-auto rounded border border-green-200 dark:border-green-800 bg-white dark:bg-slate-900">
+                  <div className="overflow-x-auto rounded border border-green-200 dark:border-green-800 bg-surface">
                     <table className="w-full text-xs min-w-max">
-                      <thead className="bg-slate-50 dark:bg-slate-800">
+                      <thead className="bg-surface-muted">
                         <tr>
                           <th className="px-2 py-1.5 text-left font-semibold text-slate-500 whitespace-nowrap">S.No</th>
                           {aiSheetData.headers.map((h, hi) => (
@@ -1067,7 +1067,7 @@ export default function FmsPage() {
                           >
                             <td className="px-2 py-1.5 text-slate-500">{ri + 1}</td>
                             {aiSheetData.headers.map((_, ci) => (
-                              <td key={ci} className="px-2 py-1.5 text-slate-700 dark:text-slate-300 whitespace-nowrap">{row[ci] ?? ''}</td>
+                              <td key={ci} className="px-2 py-1.5 text-foreground whitespace-nowrap">{row[ci] ?? ''}</td>
                             ))}
                             <td className="px-2 py-1.5">
                               <button
@@ -1088,7 +1088,7 @@ export default function FmsPage() {
 
             {/* Intent */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Intent</label>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Intent</label>
               <Textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
@@ -1121,9 +1121,9 @@ export default function FmsPage() {
             </div>
 
             {/* Step list */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-slate-50 dark:bg-slate-800/60 px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <div className="rounded-xl border border-border overflow-hidden">
+              <div className="bg-surface-muted/60 px-4 py-2 border-b border-border">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {aiFlowName || aiResult?.name || 'Generated Workflow'}
                 </p>
               </div>
@@ -1138,7 +1138,7 @@ export default function FmsPage() {
                       ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
                       : role === 'Admin'
                       ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+                      : 'bg-slate-100 dark:bg-slate-700 text-muted-foreground';
                   const actionColor =
                     actionType === 'approve'
                       ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
@@ -1151,9 +1151,9 @@ export default function FmsPage() {
                         {step.sequence ?? step.stepNo ?? i + 1}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{step.title}</p>
+                        <p className="text-sm font-medium text-foreground">{step.title}</p>
                         {step.description && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{step.description}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{step.description}</p>
                         )}
                         <div className="mt-1.5 flex flex-wrap gap-1.5">
                           {role && (
@@ -1184,7 +1184,7 @@ export default function FmsPage() {
               </div>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-muted-foreground">
               Click below to assign team members, set TAT, and configure forms before starting the workflow.
             </p>
             <Button leftIcon={<Route className="h-3.5 w-3.5" />} onClick={openAiDraftInBuilder}>

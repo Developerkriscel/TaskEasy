@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import {
   ClipboardList, Briefcase, CheckSquare, GitBranch,
-  RefreshCw, Check, Clock, AlertTriangle, X,
+  Check, Clock, AlertTriangle, X,
   Users,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -62,10 +62,10 @@ const MODULE_CONFIG = [
 ];
 
 const MODULE_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-  DELEGATION:   { label: 'DELEGATION',   bg: 'bg-[rgba(37,99,235,0.10)]', text: 'text-primary' },
-  WORK_REQUEST: { label: 'WORK REQUEST', bg: 'bg-[rgba(15,23,42,0.08)]',  text: 'text-foreground' },
-  CHECKLIST:    { label: 'CHECKLIST',    bg: 'bg-[rgba(16,185,129,0.10)]', text: 'text-success' },
-  FMS:          { label: 'FMS',          bg: 'bg-[rgba(245,158,11,0.12)]', text: 'text-warning' },
+  DELEGATION:   { label: 'DELEGATION',   bg: 'bg-blue-100 dark:bg-blue-900/30',     text: 'text-blue-700 dark:text-blue-300' },
+  WORK_REQUEST: { label: 'WORK REQUEST', bg: 'bg-violet-100 dark:bg-violet-900/30',  text: 'text-violet-700 dark:text-violet-300' },
+  CHECKLIST:    { label: 'CHECKLIST',    bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300' },
+  FMS:          { label: 'FMS',          bg: 'bg-orange-100 dark:bg-orange-900/30',   text: 'text-orange-700 dark:text-orange-300' },
 };
 
 const CRITICAL_TABS = [
@@ -95,39 +95,41 @@ function ModuleCard({
     return <div className="h-44 rounded-2xl animate-pulse bg-surface-muted" />;
   }
 
-  const stats: { status: 'total' | 'done' | 'pending' | 'delayed'; value: number; color: string; label: string }[] = [
-    { status: 'total',   value: metrics.total,   color: 'text-blue-500',   label: 'Total' },
-    { status: 'done',    value: metrics.done,    color: 'text-green-500',  label: 'Done' },
-    { status: 'pending', value: metrics.pending, color: 'text-yellow-500', label: 'Pending' },
-    { status: 'delayed', value: metrics.delayed, color: 'text-red-500',    label: 'Delayed' },
+  const stats: { status: 'total' | 'done' | 'pending' | 'delayed'; value: number; color: string; bgColor: string; label: string }[] = [
+    { status: 'total',   value: metrics.total,   color: 'text-blue-400',   bgColor: 'bg-blue-500/10',   label: 'Total' },
+    { status: 'done',    value: metrics.done,    color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', label: 'Done' },
+    { status: 'pending', value: metrics.pending, color: 'text-amber-400',  bgColor: 'bg-amber-500/10',  label: 'Pending' },
+    { status: 'delayed', value: metrics.delayed, color: 'text-rose-400',   bgColor: 'bg-rose-500/10',   label: 'Delayed' },
   ];
 
   return (
-    <div className="rounded-2xl p-5 bg-surface border border-border shadow-[0_2px_12px_rgba(15,23,42,0.06)] relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: cardGradient }} />
+    <div className="rounded-2xl p-5 bg-surface border border-border shadow-[0_4px_20px_rgba(0,0,0,0.08)] relative overflow-hidden group hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+      <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl" style={{ background: cardGradient }} />
 
       <div className="flex items-start justify-between mb-4 mt-1">
-        <p className="text-sm font-semibold text-foreground leading-tight max-w-[65%]">{label}</p>
+        <p className="text-sm font-semibold text-foreground leading-tight max-w-[65%] font-display">{label}</p>
         <div
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
+          className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110"
           style={{ background: cardGradient, boxShadow: cardShadow }}
         >
-          <Icon className="h-4.5 w-4.5 text-contrast" />
+          <Icon className="h-5 w-5 text-white" />
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 pt-3 border-t border-border">
-        {stats.map(({ status, value, color, label: statLabel }, i) => (
+      <div className="grid grid-cols-4 gap-1 pt-3 border-t border-border/50">
+        {stats.map(({ status, value, color, bgColor, label: statLabel }) => (
           <button
             key={status}
             onClick={() => onStatClick({ module: moduleKey, status, label: `${label} — ${statLabel}` })}
-            className={cn(
-              'text-center rounded-lg py-1 transition-colors hover:bg-surface-muted cursor-pointer',
-              i > 0 && 'border-l border-border',
-            )}
+            className="flex flex-col items-center transition-all hover:scale-105 cursor-pointer"
           >
-            <p className={cn('text-2xl font-bold', color)}>{value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{statLabel}</p>
+            <div className={cn(
+              'flex items-center justify-center rounded-full h-10 w-10',
+              bgColor,
+            )}>
+              <p className={cn('text-base font-bold font-display', color)}>{value}</p>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1 font-medium">{statLabel}</p>
           </button>
         ))}
       </div>
@@ -143,8 +145,8 @@ function ProjectWiseStatusTable({ rows, loading }: {
 }) {
   return (
     <div className="section-card overflow-hidden h-full p-0">
-      <div className="border-b border-border bg-surface-muted/70 px-4 py-3">
-        <p className="text-sm font-semibold text-foreground">Project Wise Status</p>
+      <div className="border-b border-border bg-gradient-to-r from-blue-500/5 to-indigo-500/5 px-4 py-3">
+        <p className="text-sm font-semibold text-foreground font-display">Project Wise Status</p>
       </div>
       {loading ? (
         <div className="h-32 animate-pulse bg-surface-muted/70" />
@@ -246,8 +248,8 @@ function FmsWiseStatusTable({ rows, loading }: {
 
   return (
     <div className="section-card overflow-hidden h-full p-0">
-      <div className="border-b border-border bg-surface-muted/70 px-4 py-3">
-        <p className="text-sm font-semibold text-foreground">FMS Wise Task Status</p>
+      <div className="border-b border-border bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-4 py-3">
+        <p className="text-sm font-semibold text-foreground font-display">FMS Wise Task Status</p>
       </div>
       {loading ? (
         <div className="h-32 animate-pulse bg-surface-muted/70" />
@@ -308,7 +310,7 @@ function TasksTrendChart({ data, loading }: { data: DashboardData['trend']; load
 
   return (
     <div className="section-card h-full p-4">
-      <p className="mb-4 text-sm font-semibold text-foreground">Tasks Trend</p>
+      <p className="mb-4 text-sm font-semibold text-foreground font-display">Tasks Trend</p>
       {loading ? (
         <div className="h-44 animate-pulse rounded-lg bg-surface-muted/70" />
       ) : (
@@ -367,9 +369,9 @@ function PersonalPriorityList({
 }) {
   return (
     <div className="section-card overflow-hidden h-full p-0">
-      <div className="flex items-center gap-2 border-b border-border bg-surface-muted/70 px-4 py-3">
+      <div className="flex items-center gap-2 border-b border-border bg-gradient-to-r from-amber-500/5 to-yellow-500/5 px-4 py-3">
         <span className="text-amber-500">⭐</span>
-        <p className="text-sm font-semibold text-foreground">Your Personal Priority</p>
+        <p className="text-sm font-semibold text-foreground font-display">Your Personal Priority</p>
       </div>
       <div className="max-h-64 divide-y divide-border overflow-y-auto">
         {loading ? (
@@ -461,10 +463,10 @@ function CriticalTeamTasks({ data, loading }: { data: DashboardData | undefined;
 
   return (
     <div className="section-card overflow-hidden p-0">
-      <div className="border-b border-border bg-surface-muted/70 px-4 pt-3 pb-0">
+      <div className="border-b border-border bg-gradient-to-r from-red-500/5 to-rose-500/5 px-4 pt-3 pb-0">
         <div className="flex items-center gap-2 mb-3">
           <AlertTriangle className="h-4 w-4 text-red-500" />
-          <p className="text-sm font-semibold text-foreground">Critical Team Tasks</p>
+          <p className="text-sm font-semibold text-foreground font-display">Critical Team Tasks</p>
         </div>
         {/* Tab pills */}
         <div className="flex gap-1 flex-wrap">
@@ -713,12 +715,12 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      {/* Compact greeting header */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
-        {/* Greeting + time */}
-        <div className="flex-1 min-w-0">
-          <p className="text-base font-bold text-foreground truncate">
-            {greeting}, <span className="text-primary">{firstName}</span>
+      {/* Greeting header with gradient */}
+      <div className="relative flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-surface px-5 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-500/8 dark:to-pink-500/5" />
+        <div className="relative flex-1 min-w-0">
+          <p className="text-lg font-bold text-foreground truncate font-display">
+            {greeting}, <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{firstName}</span>
             {currentUserBirthday && <span className="ml-1.5">🎂 Happy Birthday!</span>}
             {currentUserAnniversary && <span className="ml-1.5">🎉 Happy Anniversary!</span>}
             {!currentUserBirthday && !currentUserAnniversary && <span className="ml-0.5">👋</span>}
@@ -728,7 +730,7 @@ export default function DashboardPage() {
 
         {/* View toggle */}
         {canSeeTeam && (
-          <div className="flex rounded-xl border border-border bg-surface-muted overflow-hidden">
+          <div className="relative flex rounded-xl border border-border bg-surface-muted overflow-hidden">
             {(['team', 'my'] as const).map((v) => (
               <button
                 key={v}
@@ -736,7 +738,7 @@ export default function DashboardPage() {
                 className={cn(
                   'px-4 py-1.5 text-xs font-semibold transition-all',
                   view === v
-                    ? 'bg-primary shadow-[0_6px_16px_-8px_rgba(37,99,235,0.45)]'
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-[0_6px_16px_-8px_rgba(37,99,235,0.45)]'
                     : 'text-muted-foreground hover:bg-surface-strong hover:text-foreground',
                   v === 'my' && 'border-l border-border',
                 )}
@@ -748,15 +750,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Hard Refresh */}
-        <button
-          onClick={() => window.location.reload()}
-          className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-primary/25 hover:text-primary"
-          title="Hard refresh — reloads the entire page"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Refresh
-        </button>
       </div>
 
       {/* Filter bar */}

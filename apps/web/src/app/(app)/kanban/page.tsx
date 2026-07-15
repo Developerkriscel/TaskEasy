@@ -44,7 +44,7 @@ function TaskModal({ task, onClose }: { task: DelegationTask; onClose: () => voi
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={onClose}>
       <div
-        className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-4"
+        className="relative w-full max-w-lg rounded-2xl bg-surface shadow-2xl p-6 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -53,7 +53,7 @@ function TaskModal({ task, onClose }: { task: DelegationTask; onClose: () => voi
 
         <div className="space-y-1">
           <p className="text-xs font-mono text-slate-400">{task.taskId}</p>
-          <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{task.title}</h2>
+          <h2 className="text-lg font-bold text-foreground">{task.title}</h2>
           {task.description && (
             <p className="text-sm text-slate-600 dark:text-slate-400">{task.description}</p>
           )}
@@ -61,20 +61,20 @@ function TaskModal({ task, onClose }: { task: DelegationTask; onClose: () => voi
 
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="space-y-1">
-            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Status</p>
             <StatusBadge status={task.status} />
           </div>
           <div className="space-y-1">
-            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Priority</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Priority</p>
             <PriorityBadge priority={task.priority} />
           </div>
           <div className="space-y-1">
-            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1"><User className="h-3 w-3" /> Assignee</p>
-            <p className="font-medium text-slate-700 dark:text-slate-300">{task.delegatedTo?.name ?? '—'}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1"><User className="h-3 w-3" /> Assignee</p>
+            <p className="font-medium text-foreground">{task.delegatedTo?.name ?? '—'}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1"><Calendar className="h-3 w-3" /> Due Date</p>
-            <p className={cn('font-medium', isOverdue(task.targetDate) && task.status !== 'COMPLETED' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300')}>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1"><Calendar className="h-3 w-3" /> Due Date</p>
+            <p className={cn('font-medium', isOverdue(task.targetDate) && task.status !== 'COMPLETED' ? 'text-red-500' : 'text-foreground')}>
               {formatDate(task.targetDate)}
               {isOverdue(task.targetDate) && task.status !== 'COMPLETED' && (
                 <AlertCircle className="inline h-3.5 w-3.5 ml-1 text-red-500" />
@@ -83,19 +83,19 @@ function TaskModal({ task, onClose }: { task: DelegationTask; onClose: () => voi
           </div>
           {task.project && (
             <div className="space-y-1 col-span-2">
-              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Project</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Project</p>
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: task.project.color ?? '#6366f1' }} />
-                <p className="font-medium text-slate-700 dark:text-slate-300">{task.project.name}</p>
+                <p className="font-medium text-foreground">{task.project.name}</p>
               </div>
             </div>
           )}
         </div>
 
         {task.doerRemarks && (
-          <div className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-0.5">Doer Remarks</p>
-            <p className="text-sm text-slate-700 dark:text-slate-300">{task.doerRemarks}</p>
+          <div className="rounded-lg bg-surface-muted px-3 py-2">
+            <p className="text-xs text-muted-foreground mb-0.5">Doer Remarks</p>
+            <p className="text-sm text-foreground">{task.doerRemarks}</p>
           </div>
         )}
 
@@ -131,14 +131,14 @@ function KanbanCard({
       draggable
       onDragStart={() => onDragStart(task.id)}
       onClick={() => onClick(task)}
-      className="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 space-y-2.5 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all select-none"
+      className="rounded-xl bg-surface border border-border p-3 space-y-2.5 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all select-none"
     >
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs font-mono text-slate-400 shrink-0">{task.taskId}</p>
         <PriorityBadge priority={task.priority} />
       </div>
 
-      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">
+      <p className="text-sm font-medium text-foreground font-display line-clamp-2 leading-snug">
         {task.title}
       </p>
 
@@ -193,13 +193,13 @@ function KanbanColumn({
   return (
     <div className="flex-shrink-0 w-64 flex flex-col">
       {/* Column header */}
-      <div className={cn('rounded-t-xl border-t-4 bg-slate-100 dark:bg-slate-800/80 px-3 py-2.5 mb-2', color)}>
+      <div className={cn('rounded-t-xl border-t-4 bg-surface-muted/80 px-3 py-2.5 mb-2', color)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className={cn('h-2 w-2 rounded-full', dot)} />
             <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
           </div>
-          <span className="rounded-full bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-xs px-2 py-0.5 font-medium">
+          <span className="rounded-full bg-white dark:bg-slate-700 text-muted-foreground text-xs px-2 py-0.5 font-medium">
             {tasks.length}
           </span>
         </div>
@@ -217,7 +217,7 @@ function KanbanColumn({
         onDrop={(e) => { e.preventDefault(); onDrop(col); }}
       >
         {tasks.length === 0 && (
-          <div className={cn('flex items-center justify-center h-20 rounded-lg border-2 border-dashed text-xs text-slate-500 dark:text-slate-400', isOver && canDrop ? 'border-indigo-300 dark:border-indigo-600' : 'border-slate-200 dark:border-slate-700')}>
+          <div className={cn('flex items-center justify-center h-20 rounded-lg border-2 border-dashed text-xs text-muted-foreground', isOver && canDrop ? 'border-indigo-300 dark:border-indigo-600' : 'border-border')}>
             Drop here
           </div>
         )}
@@ -294,13 +294,13 @@ export default function KanbanPage() {
       <div className="flex items-center justify-between gap-3 flex-wrap flex-shrink-0">
         <div className="flex items-center gap-2">
           <Kanban className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Kanban Board</h1>
-          <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Delegation Tasks</span>
+          <h1 className="text-xl font-bold font-display text-foreground">Kanban Board</h1>
+          <span className="text-xs text-muted-foreground ml-1">Delegation Tasks</span>
         </div>
         <select
           value={projectFilter}
           onChange={(e) => setProjectFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="">All Projects</option>
           {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}

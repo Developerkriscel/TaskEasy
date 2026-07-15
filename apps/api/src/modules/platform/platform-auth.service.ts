@@ -84,7 +84,7 @@ export class PlatformAuthService {
 
     const role = normalizePlatformRole(user.role);
     const permissions = this.resolvePermissions(role, user.permissions);
-    const tokens = await this.issueTokens(user.id, user.email, role, permissions);
+    const tokens = await this.issueTokens(user.id, user.email, role, permissions, userAgent, ipAddress);
 
     return {
       ...tokens,
@@ -233,6 +233,8 @@ export class PlatformAuthService {
     email: string,
     role: string,
     permissions: string[],
+    deviceInfo?: string,
+    ipAddress?: string,
   ) {
     const payload: PlatformJwtPayload = {
       sub: userId,
@@ -272,6 +274,8 @@ export class PlatformAuthService {
         userId,
         tokenHash,
         expiresAt: new Date(Date.now() + refreshExpiryMs),
+        deviceInfo,
+        ipAddress,
       },
     });
 

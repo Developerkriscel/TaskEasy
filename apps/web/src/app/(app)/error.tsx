@@ -22,14 +22,14 @@ export default function AppError({
         <AlertTriangle className="h-7 w-7 text-red-500" />
       </div>
       <div>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <h2 className="text-lg font-semibold text-foreground">
           Something went wrong
         </h2>
-        <p className="mt-1 max-w-md text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1 max-w-md text-sm text-muted-foreground">
           This page hit an unexpected error. You can try again, or head back to the dashboard.
         </p>
         {error.digest && (
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Reference: {error.digest}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Reference: {error.digest}</p>
         )}
       </div>
       <div className="flex gap-2">

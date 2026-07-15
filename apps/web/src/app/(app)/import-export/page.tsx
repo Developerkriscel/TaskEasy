@@ -294,7 +294,7 @@ export default function ImportExportPage() {
     <div className="flex flex-col gap-6 p-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2">
           <FileSpreadsheet className="h-6 w-6 text-primary" /> Import / Export Center
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">

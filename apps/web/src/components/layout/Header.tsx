@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Menu, Bell, ChevronDown, User, Key, LogOut,
-  Plus, Search, Briefcase, FolderKanban, Users, ListTodo, Sun, Moon,
+  Plus, Search, Briefcase, FolderKanban, Users, ListTodo, Sun, Moon, RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
@@ -211,6 +211,11 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Refresh */}
+          <button onClick={() => window.location.reload()} className={iconBtn} aria-label="Refresh page" title="Refresh page">
+            <RefreshCw className="h-4 w-4" />
+          </button>
 
           {/* Theme toggle */}
           <button onClick={toggleTheme} className={iconBtn} aria-label="Toggle dark mode">

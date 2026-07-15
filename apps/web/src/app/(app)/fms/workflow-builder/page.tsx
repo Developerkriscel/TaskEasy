@@ -127,12 +127,12 @@ export default function WorkflowBuilderPage() {
         </Button>
         <div className="flex items-center gap-2">
           <GitBranch className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Workflow Builder</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Workflow Builder</h1>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-4">
-        <h2 className="font-semibold text-slate-800 dark:text-slate-200">Workflow Details</h2>
+      <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
+        <h2 className="font-semibold text-foreground font-display">Workflow Details</h2>
         <Input label="Workflow Name *" value={name} onChange={(e) => setName(e.target.value)} />
         <Textarea label="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
         <Select label="Project (optional)" value={projectId} onChange={(e) => setProjectId(e.target.value)}>
@@ -143,14 +143,14 @@ export default function WorkflowBuilderPage() {
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-slate-800 dark:text-slate-200">Steps ({steps.length})</h2>
+          <h2 className="font-semibold text-foreground font-display">Steps ({steps.length})</h2>
           <Button size="sm" variant="outline" leftIcon={<Plus className="h-4 w-4" />} onClick={addStep}>
             Add Step
           </Button>
         </div>
 
         {steps.map((step, idx) => (
-          <div key={idx} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 space-y-3">
+          <div key={idx} className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-indigo-600">Step {step.stepNo}</span>
               {steps.length > 1 && (

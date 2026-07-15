@@ -130,7 +130,7 @@ export default function PredictivePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2">
             <TrendingUp className="h-6 w-6 text-primary" /> Predictive Analytics
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">

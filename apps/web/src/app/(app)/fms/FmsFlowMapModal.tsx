@@ -55,7 +55,7 @@ function stepStyle(status: string | undefined, isCurrent: boolean) {
     return { card: 'bg-blue-50 dark:bg-blue-900/20 border-blue-500', badge: 'bg-blue-600 text-contrast', label: 'LIVE' };
   if (status === 'LATE')
     return { card: 'bg-red-50 dark:bg-red-900/20 border-red-400', badge: 'bg-red-500 text-contrast', label: 'LATE' };
-  return { card: 'bg-slate-50 dark:bg-slate-800/60 border-slate-300 dark:border-slate-600', badge: 'bg-slate-400 text-contrast', label: 'PENDING' };
+  return { card: 'bg-surface-muted/60 border-border', badge: 'bg-slate-400 text-contrast', label: 'PENDING' };
 }
 
 // ── Single step card ──────────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ function StepCard({ step, isCurrent }: { step: FlowMapStep; isCurrent: boolean }
 
       {/* Title + status badge */}
       <div className="flex items-start justify-between gap-1 mb-1.5 mt-1">
-        <p className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight line-clamp-2">{step.title}</p>
+        <p className="text-xs font-bold text-foreground leading-tight line-clamp-2">{step.title}</p>
         <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide ${style.badge}`}>
           {style.label}
         </span>
@@ -79,11 +79,11 @@ function StepCard({ step, isCurrent }: { step: FlowMapStep; isCurrent: boolean }
 
       {/* Description */}
       {step.description && (
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">{step.description}</p>
+        <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">{step.description}</p>
       )}
 
       {/* Details */}
-      <div className="space-y-0.5 text-[11px] text-slate-600 dark:text-slate-300">
+      <div className="space-y-0.5 text-[11px] text-muted-foreground">
         {step.role && <p><span className="text-slate-400">Role:</span> {step.role}</p>}
         {step.actionType && <p><span className="text-slate-400">Action:</span> {step.actionType}</p>}
         {step.assigneeName && (
@@ -132,7 +132,7 @@ function FlowCanvas({ steps, flowName }: { steps: FlowMapStep[]; flowName: strin
 
   if (steps.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
+      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
         <GitBranch className="h-10 w-10 mb-3 opacity-40" />
         <p className="text-sm">No steps to display</p>
       </div>
@@ -189,7 +189,7 @@ function FlowCanvas({ steps, flowName }: { steps: FlowMapStep[]; flowName: strin
             <div className={`shrink-0 flex items-center justify-center w-24 h-14 rounded-full border-2 shadow-sm ${
               completedCount === totalCount
                 ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
-                : 'border-slate-300 bg-slate-50 dark:bg-slate-800/60 opacity-50'
+                : 'border-slate-300 bg-surface-muted/60 opacity-50'
             }`}>
               <CheckCircle2 className={`h-5 w-5 ${completedCount === totalCount ? 'text-green-500' : 'text-slate-400'}`} />
             </div>
@@ -198,7 +198,7 @@ function FlowCanvas({ steps, flowName }: { steps: FlowMapStep[]; flowName: strin
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-[11px] text-slate-500 dark:text-slate-400 px-1">
+      <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground px-1">
         <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-blue-500 inline-block" />Live / Current</span>
         <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-green-500 inline-block" />Completed</span>
         <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-red-500 inline-block" />Late</span>
@@ -212,9 +212,9 @@ function FlowCanvas({ steps, flowName }: { steps: FlowMapStep[]; flowName: strin
 
 function ProgressTable({ steps }: { steps: FlowMapStep[] }) {
   return (
-    <div className="overflow-auto max-h-96 rounded-lg border border-slate-200 dark:border-slate-700">
+    <div className="overflow-auto max-h-96 rounded-lg border border-border">
       <table className="min-w-full text-sm divide-y divide-slate-100 dark:divide-slate-800">
-        <thead className="bg-slate-50 dark:bg-slate-800/60 text-xs uppercase tracking-wide text-slate-500 sticky top-0">
+        <thead className="bg-surface-muted/60 text-xs uppercase tracking-wide text-slate-500 sticky top-0">
           <tr>
             {['#', 'Step', 'Assignee', 'TAT', 'Planned', 'Actual', 'Status'].map((h) => (
               <th key={h} className="px-4 py-2.5 text-left font-semibold">{h}</th>
@@ -225,13 +225,13 @@ function ProgressTable({ steps }: { steps: FlowMapStep[] }) {
           {steps.map((s, i) => (
             <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
               <td className="px-4 py-2.5 text-slate-500">{s.sequence}</td>
-              <td className="px-4 py-2.5 font-medium text-slate-800 dark:text-slate-100">{s.title}</td>
-              <td className="px-4 py-2.5 text-slate-600 dark:text-slate-300">{s.assigneeName ?? '—'}</td>
+              <td className="px-4 py-2.5 font-medium text-foreground">{s.title}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{s.assigneeName ?? '—'}</td>
               <td className="px-4 py-2.5 text-amber-600 dark:text-amber-400">
                 {s.tatHours ? (s.tatHours >= 24 ? `${Math.round(s.tatHours / 24)}d` : `${s.tatHours}h`) : '—'}
               </td>
-              <td className="px-4 py-2.5 text-slate-600 dark:text-slate-300">{s.plannedDate ? formatDate(s.plannedDate) : '—'}</td>
-              <td className="px-4 py-2.5 text-slate-600 dark:text-slate-300">{s.actualDate ? formatDate(s.actualDate) : '—'}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{s.plannedDate ? formatDate(s.plannedDate) : '—'}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{s.actualDate ? formatDate(s.actualDate) : '—'}</td>
               <td className="px-4 py-2.5">
                 <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                   s.status === 'COMPLETED' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' :
@@ -259,7 +259,7 @@ function StatBar({ steps, workflowName }: { steps: FlowMapStep[]; workflowName: 
 
   const stats = [
     { label: 'Status', value: completedCount === steps.length ? 'completed' : lateCount > 0 ? 'late' : 'active', color: completedCount === steps.length ? 'text-green-600' : lateCount > 0 ? 'text-red-600' : 'text-indigo-600' },
-    { label: 'Total Steps', value: steps.length, color: 'text-slate-800 dark:text-slate-100' },
+    { label: 'Total Steps', value: steps.length, color: 'text-foreground' },
     { label: 'Current Step', value: currentIdx || steps.length, color: 'text-amber-600' },
     { label: 'Completed', value: `${completedCount}/${steps.length}`, color: 'text-green-600' },
   ];
@@ -267,8 +267,8 @@ function StatBar({ steps, workflowName }: { steps: FlowMapStep[]; workflowName: 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {stats.map((s) => (
-        <div key={s.label} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3">
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-0.5">{s.label}</p>
+        <div key={s.label} className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow px-4 py-3">
+          <p className="text-[11px] text-muted-foreground mb-0.5">{s.label}</p>
           <p className={`text-lg font-bold ${s.color}`}>{String(s.value)}</p>
         </div>
       ))}
@@ -348,7 +348,7 @@ export function FmsFlowMapModal({
           <select
             value={selectedWorkflowId}
             onChange={(e) => { setSelectedWorkflowId(e.target.value); setActiveTab('flow'); }}
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 shadow-sm outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-sm outline-none focus:border-indigo-500"
           >
             <option value="">Choose a workflow…</option>
             {workflows.map((w: any) => (
@@ -363,7 +363,7 @@ export function FmsFlowMapModal({
             <span className="text-sm">Loading flow map…</span>
           </div>
         ) : (!activeWorkflowId && !propSteps) ? (
-          <div className="flex flex-col items-center justify-center py-14 text-slate-400 dark:text-slate-500">
+          <div className="flex flex-col items-center justify-center py-14 text-muted-foreground">
             <GitBranch className="h-10 w-10 mb-3 opacity-40" />
             <p className="text-sm">Select a workflow to view its flow map</p>
           </div>
@@ -381,7 +381,7 @@ export function FmsFlowMapModal({
                   className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
                     activeTab === t
                       ? 'bg-indigo-600 text-contrast shadow'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      : 'bg-surface-muted text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
                   {t === 'flow' ? 'Flow' : 'Current Progress'}

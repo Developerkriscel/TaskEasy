@@ -79,24 +79,24 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
       }
     >
       <div className="space-y-3">
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-800/60">
+            <thead className="bg-surface-muted/60">
               <tr>
                 {['Label', 'Type', 'Required', 'Status', ''].map((h) => (
-                  <th key={h} className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 whitespace-nowrap">{h}</th>
+                  <th key={h} className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {fields.length === 0 && (
-                <tr><td colSpan={5} className="px-3 py-4 text-center text-xs text-slate-500 dark:text-slate-400">No fields. Click Add Field below.</td></tr>
+                <tr><td colSpan={5} className="px-3 py-4 text-center text-xs text-muted-foreground">No fields. Click Add Field below.</td></tr>
               )}
               {fields.map((f, i) => (
                 <tr key={i}>
                   <td className="px-2 py-1.5">
                     <input
-                      className="w-40 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-40 rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       value={f.label}
                       onChange={(e) => updateField(i, 'label', e.target.value)}
                       placeholder="Field label"
@@ -104,7 +104,7 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
                   </td>
                   <td className="px-2 py-1.5">
                     <select
-                      className="rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       value={f.type}
                       onChange={(e) => updateField(i, 'type', e.target.value)}
                     >
@@ -120,7 +120,7 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
                   </td>
                   <td className="px-2 py-1.5">
                     <select
-                      className="rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       value={f.editable ? 'editable' : 'readonly'}
                       onChange={(e) => updateField(i, 'editable', e.target.value === 'editable')}
                     >
@@ -285,8 +285,8 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Template Ready</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <h2 className="text-2xl font-bold text-foreground">Template Ready</h2>
+            <p className="text-sm text-muted-foreground">
               {isStarted
                 ? `Flow template has been saved and ${savedTaskCount} task${savedTaskCount !== 1 ? 's' : ''} assigned.`
                 : 'Flow template has been saved.'}
@@ -295,10 +295,10 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
 
           {hasSheet && (
             <>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground">
                 Do you want to create one live FMS flow for each Google Sheet row now?
               </p>
-              <div className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-3 text-left text-sm text-slate-600 dark:text-slate-300">
+              <div className="w-full rounded-xl border border-border bg-surface-muted/60 px-4 py-3 text-left text-sm text-muted-foreground">
                 <span className="font-semibold">Mapping:</span> each selected sheet column will prefill the matching first-step form field.
               </div>
               <Button
@@ -375,17 +375,17 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
               value={flowName}
               onChange={(e) => setFlowName(e.target.value)}
               placeholder="Enter workflow name…"
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           {/* Step Table */}
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="min-w-max w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                <tr className="bg-surface-muted/60 border-b border-border">
                   {['#', 'Step', 'Description', 'TAT', '', 'Role', 'Action', 'Assign To', 'Form', 'Editable', 'Read-only', 'Remove'].map((h, i) => (
-                    <th key={i} className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    <th key={i} className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -420,7 +420,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           value={step.title}
                           onChange={(e) => updateStep(idx, 'title', e.target.value)}
                           placeholder="Step title…"
-                          className="w-44 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-44 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </td>
 
@@ -430,7 +430,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           value={step.description}
                           onChange={(e) => updateStep(idx, 'description', e.target.value)}
                           placeholder="Description…"
-                          className="w-44 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-44 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </td>
 
@@ -441,7 +441,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           min={1}
                           value={step.tatValue}
                           onChange={(e) => updateStep(idx, 'tatValue', Math.max(1, Number(e.target.value)))}
-                          className="w-16 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-16 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </td>
 
@@ -450,7 +450,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.tatUnit}
                           onChange={(e) => updateStep(idx, 'tatUnit', e.target.value)}
-                          className="rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="days">Days</option>
                           <option value="hours">Hours</option>
@@ -462,7 +462,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.role}
                           onChange={(e) => updateStep(idx, 'role', e.target.value)}
-                          className="rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="Employee">Employee</option>
                           <option value="Admin">Admin</option>
@@ -475,7 +475,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.actionType}
                           onChange={(e) => updateStep(idx, 'actionType', e.target.value)}
-                          className="rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="submit">submit</option>
                           <option value="review">review</option>
@@ -488,7 +488,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.assignedToId}
                           onChange={(e) => updateStep(idx, 'assignedToId', e.target.value)}
-                          className="w-36 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-36 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="">Select user</option>
                           {users.map((u) => (
@@ -520,7 +520,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
 
                       {/* Read-only count */}
                       <td className="px-3 py-2 text-center">
-                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{readonlyCount}</span>
+                        <span className="text-xs font-semibold text-muted-foreground">{readonlyCount}</span>
                       </td>
 
                       {/* Remove */}

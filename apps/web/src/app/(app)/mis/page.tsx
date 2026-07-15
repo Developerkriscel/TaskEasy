@@ -153,7 +153,7 @@ function DrillDownModal({ target, filters, onClose }: {
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
             {target.label.toUpperCase()}: DRILL DOWN REPORT
           </p>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{kpiTitle}</h2>
+          <h2 className="text-xl font-bold font-display text-foreground">{kpiTitle}</h2>
           {target.kpi && (
             <p className="flex items-center gap-1.5 text-sm font-medium text-red-500 mt-1">
               <Filter className="h-3.5 w-3.5" />
@@ -162,7 +162,7 @@ function DrillDownModal({ target, filters, onClose }: {
           )}
         </div>
         <div className="flex items-start gap-2 flex-shrink-0">
-          <div className="text-right bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5">
+          <div className="text-right bg-surface-muted rounded-xl px-4 py-2.5">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Employee</p>
             <p className="text-sm font-bold text-indigo-700 mt-0.5">{target.name}</p>
           </div>
@@ -207,9 +207,9 @@ function DrillDownModal({ target, filters, onClose }: {
           <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800">
+                <tr className="bg-surface-muted">
                   {['ID', 'TASK DESCRIPTION', 'PLAN DATE', 'ACTUAL DATE', 'DELAY', 'STATUS'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wide border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wide border-b border-border whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -226,7 +226,7 @@ function DrillDownModal({ target, filters, onClose }: {
                       <td className="px-4 py-3 text-slate-500 text-xs font-mono">
                         {task.taskId ?? (task.id ? String(task.id).slice(-6) : i + 1)}
                       </td>
-                      <td className="px-4 py-3 text-slate-800 dark:text-slate-200 font-medium max-w-xs">
+                      <td className="px-4 py-3 text-foreground font-display font-medium max-w-xs">
                         {task.title ?? task.description ?? '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-600 text-xs whitespace-pre-line">
@@ -358,7 +358,7 @@ function EmployeeMisCard({
             <p className={cn('text-sm font-semibold', avgScore < 0 ? 'text-red-500' : 'text-green-600')}>
               Avg. Score: {avgScore.toFixed(1)}%
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Last Week Planned Target Score:&nbsp;
               <span className="font-medium text-slate-500">{card.lastWeekTarget ?? '—'}</span>
             </p>
@@ -596,7 +596,7 @@ export default function MisPage() {
     <div className="space-y-5">
       {/* Page header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">MIS Analytics</h1>
+        <h1 className="text-xl font-bold font-display text-foreground">MIS Analytics</h1>
         <button
           onClick={() => saveSnapshot()}
           disabled={snapshotPending}
@@ -621,10 +621,10 @@ export default function MisPage() {
         {statCards.map(({ value, label, badge, badgeColor }) => (
           <div
             key={label}
-            className="rounded-xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700 shadow-sm p-5 flex items-start justify-between"
+            className="rounded-xl border border-slate-200 bg-surface dark:border-slate-700 shadow-sm p-5 flex items-start justify-between"
           >
             <div>
-              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{value}</p>
+              <p className="text-2xl font-bold text-foreground">{value}</p>
               <p className="text-xs text-slate-500 mt-1 leading-snug">{label}</p>
             </div>
             <span className={cn('text-xs font-semibold rounded-full px-2 py-0.5 mt-0.5 flex-shrink-0', badgeColor)}>
@@ -636,14 +636,14 @@ export default function MisPage() {
 
       {/* View toggle */}
       <div className="flex items-center justify-between">
-        <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+        <div className="flex rounded-lg border border-border bg-surface overflow-hidden">
           <button
             onClick={() => setViewMode('cards')}
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors',
               viewMode === 'cards'
                 ? 'bg-indigo-600 text-contrast'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
+                : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200',
             )}
           >
             <LayoutGrid className="h-4 w-4" />
@@ -652,10 +652,10 @@ export default function MisPage() {
           <button
             onClick={() => setViewMode('table')}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 text-sm font-semibold border-l border-slate-200 dark:border-slate-700 transition-colors',
+              'flex items-center gap-2 px-4 py-2 text-sm font-semibold border-l border-border transition-colors',
               viewMode === 'table'
                 ? 'bg-indigo-600 text-contrast'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
+                : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200',
             )}
           >
             <List className="h-4 w-4" />
@@ -666,7 +666,7 @@ export default function MisPage() {
         <button
           onClick={() => refetch()}
           title="Refresh"
-          className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-colors"
+          className="p-2 rounded-lg border border-border bg-surface text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-colors"
         >
           <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
         </button>
@@ -674,8 +674,8 @@ export default function MisPage() {
 
       {/* Error state */}
       {isError && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-12 text-center">
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Failed to load MIS data</p>
+        <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow py-12 text-center">
+          <p className="text-sm font-medium text-muted-foreground">Failed to load MIS data</p>
           <button onClick={() => refetch()} className="mt-2 text-sm font-medium text-indigo-600 hover:underline">
             Retry
           </button>
@@ -691,7 +691,7 @@ export default function MisPage() {
               ))
             : cards.length === 0
             ? (
-              <div className="col-span-2 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-16 text-center">
+              <div className="col-span-2 rounded-xl border border-dashed border-border bg-surface py-16 text-center">
                 <p className="text-sm text-slate-500">No employee data for the selected filters</p>
               </div>
             )
@@ -710,7 +710,7 @@ export default function MisPage() {
 
       {/* Detailed analysis (table) view */}
       {!isError && viewMode === 'table' && !isLoading && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow shadow-sm overflow-hidden">
           <DetailedAnalysisTable
             cards={cards}
             onDrill={setDrill}
@@ -721,7 +721,7 @@ export default function MisPage() {
 
       {/* Loading state for table view */}
       {!isError && viewMode === 'table' && isLoading && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-64 animate-pulse" />
+        <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow h-64 animate-pulse" />
       )}
 
       {/* Modals */}

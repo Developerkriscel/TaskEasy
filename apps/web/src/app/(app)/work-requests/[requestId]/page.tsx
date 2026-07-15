@@ -70,14 +70,14 @@ export default function WorkRequestDetailPage() {
         <Button variant="ghost" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Work Request Detail</h1>
+        <h1 className="text-xl font-bold font-display text-foreground">Work Request Detail</h1>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-5">
+      <div className="rounded-2xl border border-border bg-surface p-6 space-y-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-mono text-slate-400 mb-1">{req.requestId}</p>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{req.title}</h2>
+            <h2 className="text-lg font-semibold text-foreground">{req.title}</h2>
           </div>
           <StatusBadge status={req.status} />
         </div>
@@ -89,24 +89,24 @@ export default function WorkRequestDetailPage() {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-slate-500">Requested By</span>
-            <p className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">{req.requestedBy?.name}</p>
+            <p className="font-medium text-foreground font-display mt-0.5">{req.requestedBy?.name}</p>
           </div>
           <div>
             <span className="text-slate-500">Assigned To</span>
-            <p className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">{req.requestFor?.name}</p>
+            <p className="font-medium text-foreground font-display mt-0.5">{req.requestFor?.name}</p>
           </div>
           <div>
             <span className="text-slate-500">Deadline</span>
-            <p className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">{formatDate(req.deadlineDate)}</p>
+            <p className="font-medium text-foreground font-display mt-0.5">{formatDate(req.deadlineDate)}</p>
           </div>
           <div>
             <span className="text-slate-500">Project</span>
-            <p className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">{req.project?.name ?? '—'}</p>
+            <p className="font-medium text-foreground font-display mt-0.5">{req.project?.name ?? '—'}</p>
           </div>
         </div>
 
         {req.doerRemarks && (
-          <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-4">
+          <div className="rounded-lg bg-surface-muted p-4">
             <p className="text-xs font-medium text-slate-500 mb-1">Completion Remarks</p>
             <p className="text-sm">{req.doerRemarks}</p>
           </div>

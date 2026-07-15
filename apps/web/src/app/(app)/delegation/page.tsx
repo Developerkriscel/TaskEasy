@@ -411,7 +411,7 @@ export default function DelegationPage() {
   return (
     <div className="space-y-5">
       {/* Tabs + Assign Tasks */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700" role="tablist">
+      <div className="flex items-center justify-between border-b border-border" role="tablist">
         <div className="flex">
           {tabs.map((tab) => (
             <button
@@ -422,7 +422,7 @@ export default function DelegationPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
-                  ? 'border-indigo-600 text-indigo-600'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-900/20'
                   : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }`}
             >

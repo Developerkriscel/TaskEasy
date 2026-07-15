@@ -30,8 +30,8 @@ const ACTION_COLORS: Record<string, string> = {
   APPROVE: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20',
   REWORK: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20',
   REJECT: 'text-red-600 bg-red-50 dark:bg-red-900/20',
-  LOGIN: 'text-slate-600 bg-slate-100 dark:bg-slate-800',
-  LOGOUT: 'text-slate-600 bg-slate-100 dark:bg-slate-800',
+  LOGIN: 'text-slate-600 bg-surface-muted',
+  LOGOUT: 'text-slate-600 bg-surface-muted',
   ROLE_CHANGE: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20',
   STATUS_CHANGE: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20',
 };
@@ -65,7 +65,7 @@ export default function AuditLogsPage() {
       header: 'User',
       render: (_, row) => (
         <div>
-          <p className="font-medium text-sm text-slate-800 dark:text-slate-200">{row.actor?.name ?? row.actorId}</p>
+          <p className="font-medium text-sm text-foreground font-display">{row.actor?.name ?? row.actorId}</p>
           <p className="text-xs text-slate-500">{row.actor?.email}</p>
         </div>
       ),
@@ -97,7 +97,7 @@ export default function AuditLogsPage() {
     <div className="space-y-5">
       <div className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-indigo-500" />
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Audit Logs</h1>
+        <h1 className="text-xl font-bold font-display text-foreground">Audit Logs</h1>
       </div>
 
       <div className="max-w-xs">

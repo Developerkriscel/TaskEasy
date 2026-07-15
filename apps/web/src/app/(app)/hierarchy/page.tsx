@@ -73,7 +73,7 @@ export default function HierarchyPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Set Hierarchy</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Set Hierarchy</h1>
         </div>
         <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setCreateModal(true)}>
           Add Group
@@ -83,21 +83,21 @@ export default function HierarchyPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-40 animate-pulse" />
+            <div key={i} className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow h-40 animate-pulse" />
           ))}
         </div>
       ) : groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
           <Users className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">No hierarchy groups yet. Create one to get started.</p>
+          <p className="text-sm text-muted-foreground">No hierarchy groups yet. Create one to get started.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {groups.map((group: HierarchyGroup) => (
-            <div key={group.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 card-shadow overflow-hidden">
+            <div key={group.id} className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow card-shadow overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
                 <div>
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{group.groupName}</p>
+                  <p className="text-sm font-semibold text-foreground font-display">{group.groupName}</p>
                   <p className="text-xs text-indigo-500 mt-0.5">Admin: {group.admin?.name}</p>
                 </div>
                 <div className="flex gap-1">
@@ -110,10 +110,10 @@ export default function HierarchyPage() {
                 </div>
               </div>
               <div className="px-5 py-4">
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Members ({group.memberIds.length})</p>
+                <p className="text-xs text-muted-foreground mb-2">Members ({group.memberIds.length})</p>
                 <div className="flex flex-wrap gap-1.5">
                   {group.memberIds.length === 0 ? (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 italic">No members assigned</p>
+                    <p className="text-xs text-muted-foreground italic">No members assigned</p>
                   ) : (
                     group.memberIds.slice(0, 5).map((id) => {
                       const u = users.find((x) => x.id === id);
@@ -125,7 +125,7 @@ export default function HierarchyPage() {
                     })
                   )}
                   {group.memberIds.length > 5 && (
-                    <span className="text-xs text-slate-500 dark:text-slate-400">+{group.memberIds.length - 5} more</span>
+                    <span className="text-xs text-muted-foreground">+{group.memberIds.length - 5} more</span>
                   )}
                 </div>
               </div>
@@ -157,7 +157,7 @@ export default function HierarchyPage() {
             {adminUsers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
           </Select>
           <div>
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Team Members</p>
+            <p className="text-sm font-medium text-foreground mb-1">Team Members</p>
             <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto border rounded-lg p-2 dark:border-slate-700">
               {/* LE-15 fix: only show employee/viewer users as possible members, not other admins */}
               {employeeUsers.filter((u) => u.id !== form.adminId).map((u) => (
@@ -170,7 +170,7 @@ export default function HierarchyPage() {
                     }))}
                   />
                   <span>{u.name}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">{u.role}</span>
+                  <span className="text-xs text-muted-foreground">{u.role}</span>
                 </label>
               ))}
             </div>

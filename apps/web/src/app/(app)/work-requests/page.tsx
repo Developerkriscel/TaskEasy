@@ -195,7 +195,7 @@ export default function WorkRequestsPage() {
   return (
     <div className="space-y-5">
       {/* Tabs + actions */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+      <div className="flex items-center justify-between border-b border-border">
         <div className="flex gap-1">
           {TABS.map((tab) => (
             <button
@@ -334,7 +334,7 @@ export default function WorkRequestsPage() {
               {...registerSubmit('doerRemarks')}
             />
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <p className="text-sm font-medium text-foreground mb-1">
                 Proof / Attachments
               </p>
               <FileUpload

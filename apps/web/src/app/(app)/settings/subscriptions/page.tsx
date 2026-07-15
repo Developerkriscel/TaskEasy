@@ -116,14 +116,14 @@ export default function SubscriptionsPage() {
         <Link href="/settings">
           <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" />Back</Button>
         </Link>
-        <CreditCard className="h-5 w-5 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">Subscriptions</h1>
+        <CreditCard className="h-5 w-5 text-violet-500" />
+        <h1 className="text-xl font-bold font-display text-foreground">Subscriptions</h1>
       </div>
 
       {/* Current plan & usage */}
       {subscription && usage && (
         <div className="rounded-2xl border border-border bg-surface p-5 space-y-2">
-          <h2 className="font-semibold text-foreground">
+          <h2 className="font-semibold font-display text-foreground">
             Current Plan: <span className="text-primary">{subscription.plan?.name ?? 'Unknown'}</span>
             <span className={cn(
               'ml-2 rounded-full px-2 py-0.5 text-[11px] font-semibold',
@@ -218,7 +218,7 @@ export default function SubscriptionsPage() {
                   </span>
                 )}
 
-                <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
+                <h3 className="text-lg font-bold font-display text-foreground">{plan.name}</h3>
                 <p className="mt-1 text-xs text-muted-foreground">{plan.description ?? plan.tier}</p>
 
                 <div className="mt-4">
@@ -307,7 +307,7 @@ export default function SubscriptionsPage() {
       {/* Request history */}
       {requests.length > 0 && (
         <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-          <h2 className="font-semibold text-foreground">Request History</h2>
+          <h2 className="font-semibold font-display text-foreground">Request History</h2>
           <div className="space-y-2">
             {requests.map((req) => {
               const style = STATUS_STYLES[req.status] ?? STATUS_STYLES.PENDING;

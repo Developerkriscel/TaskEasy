@@ -105,7 +105,7 @@ export default function ProfilePage() {
         <div className="flex flex-col gap-1.5">
           <p className="text-base font-semibold text-slate-900">{profile?.name}</p>
           <p className="text-xs text-slate-500">{profile?.email}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">{profile?.role} · {profile?.employeeId ?? 'No Employee ID'}</p>
+          <p className="text-xs text-muted-foreground">{profile?.role} · {profile?.employeeId ?? 'No Employee ID'}</p>
           <div className="flex gap-2 mt-1">
             <Button
               type="button"

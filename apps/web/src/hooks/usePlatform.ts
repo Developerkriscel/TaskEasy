@@ -34,7 +34,12 @@ export function usePlatformLogin() {
       toast.success(`Welcome back, ${user.name}!`);
       router.push('/platform/dashboard');
     },
-    onError: (err) => toast.error(getPlatformApiError(err)),
+    onError: (err) => {
+      const msg = getPlatformApiError(err);
+      if (!msg.toLowerCase().includes('2fa code required')) {
+        toast.error(msg);
+      }
+    },
   });
 }
 

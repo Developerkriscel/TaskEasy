@@ -207,16 +207,16 @@ export default function CompanySettingsPage() {
         <Link href="/settings">
           <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" />Back</Button>
         </Link>
-        <Building2 className="h-5 w-5 text-indigo-500" />
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Company Settings</h1>
+        <Building2 className="h-5 w-5 text-blue-500" />
+        <h1 className="text-xl font-bold font-display text-foreground">Company Settings</h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-5 lg:col-span-2">
+        <div className="rounded-2xl border border-border bg-surface p-6 space-y-5 lg:col-span-2">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="font-semibold text-slate-800 dark:text-slate-200">Office Shift Setup</h2>
-              <p className="text-sm text-slate-500">Shift, work week, and punch window settings for the tenant.</p>
+              <h2 className="font-semibold text-foreground font-display">Office Shift Setup</h2>
+              <p className="text-sm text-muted-foreground">Shift, work week, and punch window settings for the tenant.</p>
             </div>
             <div className="rounded-xl bg-indigo-50 px-3 py-2 text-right dark:bg-indigo-900/20">
               <p className="text-xs uppercase tracking-wide text-indigo-600 dark:text-indigo-300">Auto Working Hours</p>
@@ -271,63 +271,63 @@ export default function CompanySettingsPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+            <div className="rounded-xl border border-border p-4 dark:border-border">
               <div className="mb-3 flex items-center justify-between">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Working Days</label>
-                <span className="text-xs text-slate-500">Multi-select</span>
+                <label className="text-sm font-medium text-foreground">Working Days</label>
+                <span className="text-xs text-muted-foreground">Multi-select</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {DAYS.map((day) => (
                   <button
                     key={day.value}
                     onClick={() => toggleDay(day.value)}
-                    className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
                       settings.workingDays.includes(day.value)
-                        ? 'bg-indigo-600 text-contrast'
-                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
                     }`}
                   >
                     {day.label}
                   </button>
                 ))}
               </div>
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-muted-foreground">
                 Selected: {settings.workingDays.map(dayLabel).join(', ') || 'None'}
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+            <div className="rounded-xl border border-border p-4 dark:border-border">
               <div className="mb-3 flex items-center justify-between">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Weekly Off Days</label>
-                <span className="text-xs text-slate-500">Multi-select</span>
+                <label className="text-sm font-medium text-foreground">Weekly Off Days</label>
+                <span className="text-xs text-muted-foreground">Multi-select</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {DAYS.map((day) => (
                   <button
                     key={day.value}
                     onClick={() => toggleOffDay(day.value)}
-                    className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
                       settings.weeklyOffDays.includes(day.value)
-                        ? 'bg-emerald-600 text-contrast'
-                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                        ? 'bg-red-500 text-white shadow-sm'
+                        : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
                     }`}
                   >
                     {day.label}
                   </button>
                 ))}
               </div>
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-muted-foreground">
                 Selected: {settings.weeklyOffDays.map(dayLabel).join(', ') || 'None'}
               </p>
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+            <div className="rounded-xl border border-border p-4 dark:border-border">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Alternate Saturday Off</label>
-                  <p className="text-xs text-slate-500">Turn on when alternate Saturdays should be non-working.</p>
+                  <label className="text-sm font-medium text-foreground">Alternate Saturday Off</label>
+                  <p className="text-xs text-muted-foreground">Turn on when alternate Saturdays should be non-working.</p>
                 </div>
                 <Button
                   type="button"
@@ -365,8 +365,8 @@ export default function CompanySettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-4 lg:col-span-2">
-          <h2 className="font-semibold text-slate-800 dark:text-slate-200">Time Zone and Holidays</h2>
+        <div className="rounded-2xl border border-border bg-surface p-6 space-y-4 lg:col-span-2">
+          <h2 className="font-semibold text-foreground font-display">Time Zone and Holidays</h2>
 
           <Select
             label="Timezone"
@@ -402,10 +402,10 @@ export default function CompanySettingsPage() {
 
           <div className="space-y-2">
             {holidays.map((h: any) => (
-              <div key={h.id} className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+              <div key={h.id} className="flex items-center justify-between rounded-lg bg-surface-muted px-3 py-2">
                 <div>
-                  <span className="font-medium text-sm text-slate-700 dark:text-slate-300">{h.name}</span>
-                  <span className="ml-2 text-xs text-slate-500">{formatDate(h.date)}</span>
+                  <span className="font-medium text-sm text-foreground">{h.name}</span>
+                  <span className="ml-2 text-xs text-muted-foreground">{formatDate(h.date)}</span>
                 </div>
                 <button
                   onClick={() => removeHolidayMutation.mutate(h.id)}
@@ -416,7 +416,7 @@ export default function CompanySettingsPage() {
               </div>
             ))}
             {!holidays.length && (
-              <p className="text-sm text-slate-500 text-center py-4">No holidays added yet.</p>
+              <p className="text-sm text-muted-foreground text-center py-4">No holidays added yet.</p>
             )}
           </div>
         </div>

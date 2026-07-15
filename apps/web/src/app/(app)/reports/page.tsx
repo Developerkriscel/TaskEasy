@@ -52,32 +52,32 @@ function EmployeePerfCard({ emp, idx }: { emp: EmpPerf; idx: number }) {
   const avatarBg = AVATAR_COLORS[idx % AVATAR_COLORS.length];
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-4">
+    <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow shadow-sm p-4">
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
         <div className={cn('h-9 w-9 rounded-full flex items-center justify-center text-contrast text-sm font-bold flex-shrink-0', avatarBg)}>
           {initial}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{emp.name ?? '—'}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{emp.name ?? '—'}</p>
           <p className="text-[11px] text-slate-400 mt-0.5">
-            GRADE: <span className="font-medium text-slate-600 dark:text-slate-300">{emp.grade ?? '—'}</span>
+            GRADE: <span className="font-medium text-muted-foreground">{emp.grade ?? '—'}</span>
           </p>
           <p className="text-[11px] text-slate-400">
-            SCORE: <span className="font-medium text-slate-600 dark:text-slate-300">{emp.score ?? '—'}</span>
+            SCORE: <span className="font-medium text-muted-foreground">{emp.score ?? '—'}</span>
           </p>
         </div>
       </div>
 
       {/* Performance placeholder */}
-      <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-3 py-2 mb-3 text-center">
+      <div className="rounded-lg bg-surface-muted/50 px-3 py-2 mb-3 text-center">
         <p className="text-xs font-medium text-slate-400">Performance</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">No Data</p>
+        <p className="text-xs text-muted-foreground mt-0.5">No Data</p>
       </div>
 
       {/* Metrics grid */}
       <div className="grid grid-cols-2 gap-2 text-center">
-        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-2 py-2">
+        <div className="rounded-lg bg-surface-muted/50 px-2 py-2">
           <p className="text-lg font-bold text-slate-700 dark:text-slate-200">{emp.completed ?? 0}</p>
           <p className="text-[11px] text-slate-400">Completed</p>
         </div>
@@ -85,7 +85,7 @@ function EmployeePerfCard({ emp, idx }: { emp: EmpPerf; idx: number }) {
           <p className="text-lg font-bold text-orange-500">{emp.pending ?? 0}</p>
           <p className="text-[11px] text-orange-400">Pending</p>
         </div>
-        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-2 py-2">
+        <div className="rounded-lg bg-surface-muted/50 px-2 py-2">
           <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{emp.onTimePercent ?? 0}%</p>
           <p className="text-[11px] text-slate-400">On Time</p>
         </div>
@@ -151,7 +151,7 @@ function PerformanceTab({ filters }: { filters: FilterValues }) {
 
       {/* Detailed table */}
       <div>
-        <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h2 className="text-base font-semibold text-foreground font-display mb-3">
           Detailed Performance Table
         </h2>
         <DataTable
@@ -353,7 +353,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-0">
       {/* Underline tab bar */}
-      <div className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+      <div className="border-b border-border bg-surface">
         <nav className="flex overflow-x-auto">
           {TABS.map(({ key, label }) => (
             <button
@@ -363,7 +363,7 @@ export default function ReportsPage() {
                 'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-shrink-0',
                 tab === key
                   ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300',
+                  : 'border-transparent text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300',
               )}
             >
               {label}

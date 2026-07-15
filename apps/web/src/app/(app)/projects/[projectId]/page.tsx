@@ -35,17 +35,17 @@ export default function ProjectDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <FolderKanban className="h-5 w-5 text-indigo-500" />
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Project Detail</h1>
+        <h1 className="text-xl font-bold font-display text-foreground">Project Detail</h1>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-5">
+      <div className="rounded-2xl border border-border bg-surface p-6 space-y-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <span
               className="h-5 w-5 rounded-full flex-shrink-0"
               style={{ backgroundColor: project.color ?? '#6366f1' }}
             />
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{project.name}</h2>
+            <h2 className="text-lg font-semibold text-foreground">{project.name}</h2>
           </div>
           <StatusBadge status={project.status} />
         </div>
@@ -55,7 +55,7 @@ export default function ProjectDetailPage() {
         )}
 
         <div className="text-sm text-slate-500">
-          Created: <span className="text-slate-700 dark:text-slate-300 font-medium">{formatDate(project.createdAt)}</span>
+          Created: <span className="text-foreground font-medium">{formatDate(project.createdAt)}</span>
         </div>
       </div>
     </div>

@@ -70,7 +70,7 @@ export default function UsersPage() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Users</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Users</h1>
         </div>
         {isAdmin && (
           <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setCreateModal(true)}>

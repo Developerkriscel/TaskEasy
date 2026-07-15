@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Shield, ArrowLeft, LogOut, Smartphone, Clock, Activity, Globe,
-  Plus, Trash2, Loader2,
+  Plus, Trash2, Loader2, Eye, EyeOff,
 } from 'lucide-react';
 import Link from 'next/link';
 import { apiGet, apiDelete } from '@/lib/axios';
@@ -17,8 +17,11 @@ import { formatDate, cn } from '@/lib/utils';
 export default function SecuritySettingsPage() {
   const qc = useQueryClient();
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
+  const [showPw, setShowPw] = useState({ current: false, next: false, confirm: false });
   const [show2faSetup, setShow2faSetup] = useState(false);
+  const [show2faDisable, setShow2faDisable] = useState(false);
   const [totpCode, setTotpCode] = useState('');
+  const [disableTotpCode, setDisableTotpCode] = useState('');
   const [newIp, setNewIp] = useState('');
 
   const { data: secSettings, isLoading } = useQuery({
@@ -53,6 +56,17 @@ export default function SecuritySettingsPage() {
     onError: () => toast.error('Invalid code'),
   });
 
+  const disable2faMutation = useMutation({
+    mutationFn: () => authApi.disable2fa(disableTotpCode),
+    onSuccess: () => {
+      toast.success('2FA has been disabled');
+      setShow2faDisable(false);
+      setDisableTotpCode('');
+      updateSettingsMutation.mutate({ enforce2fa: false });
+    },
+    onError: () => toast.error('Invalid code. Please try again.'),
+  });
+
   const changePwMutation = useMutation({
     mutationFn: () => authApi.changePassword(pwForm.current, pwForm.next),
     onSuccess: () => { toast.success('Password changed'); setPwForm({ current: '', next: '', confirm: '' }); },
@@ -78,8 +92,8 @@ export default function SecuritySettingsPage() {
           setShow2faSetup(true);
           setup2fa();
         } else {
-          updateSettingsMutation.mutate({ enforce2fa: false });
-          toast.success('2FA enforcement disabled');
+          setShow2faDisable(true);
+          setDisableTotpCode('');
         }
         break;
       case 'session-timeout':
@@ -176,8 +190,8 @@ export default function SecuritySettingsPage() {
         <Link href="/settings">
           <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" />Back</Button>
         </Link>
-        <Shield className="h-5 w-5 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">Security</h1>
+        <Shield className="h-5 w-5 text-emerald-500" />
+        <h1 className="text-xl font-bold font-display text-foreground">Security</h1>
       </div>
 
       {/* Security Feature Cards */}
@@ -192,180 +206,245 @@ export default function SecuritySettingsPage() {
           return (
             <div
               key={feature.key}
-              className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-5"
+              className="rounded-2xl border border-border bg-surface p-5 space-y-4"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-muted flex-shrink-0">
-                <Icon className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                  <span className={cn('rounded-full px-2 py-0.5 text-[11px] font-semibold', statusColor(feature.status))}>
-                    {feature.status}
-                  </span>
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex-shrink-0">
+                  <Icon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <p className="text-sm text-muted-foreground mt-0.5">{feature.description}</p>
-                {feature.key === '2fa' && !secSettings?.enforce2fa && !show2faSetup && (
-                  <button
-                    onClick={() => { setShow2faSetup(true); setup2fa(); }}
-                    className="mt-2 text-sm font-medium text-primary hover:underline flex items-center gap-1"
-                  >
-                    <Shield className="h-3.5 w-3.5" /> Set up 2FA now &rarr;
-                  </button>
-                )}
-              </div>
-              <button
-                onClick={() => handleToggle(feature.key)}
-                disabled={updateSettingsMutation.isPending}
-                className={cn(
-                  'relative h-6 w-11 rounded-full transition-colors flex-shrink-0',
-                  feature.enabled ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600',
-                )}
-              >
-                <span
-                  className={cn(
-                    'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform',
-                    feature.enabled && 'translate-x-5',
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-semibold font-display text-foreground">{feature.title}</h3>
+                    <span className={cn('rounded-full px-2 py-0.5 text-[11px] font-semibold', statusColor(feature.status))}>
+                      {feature.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-0.5">{feature.description}</p>
+                  {feature.key === '2fa' && !secSettings?.enforce2fa && !show2faSetup && (
+                    <button
+                      onClick={() => { setShow2faSetup(true); setup2fa(); }}
+                      className="mt-2 text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                    >
+                      <Shield className="h-3.5 w-3.5" /> Set up 2FA now &rarr;
+                    </button>
                   )}
-                />
-              </button>
+                </div>
+                <button
+                  onClick={() => handleToggle(feature.key)}
+                  disabled={updateSettingsMutation.isPending}
+                  className="relative flex-shrink-0 rounded-full transition-colors"
+                  style={{
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: feature.enabled ? '#10b981' : '#9ca3af',
+                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  <span
+                    className="absolute rounded-full transition-transform"
+                    style={{
+                      top: '2px',
+                      left: feature.enabled ? '22px' : '2px',
+                      height: '24px',
+                      width: '24px',
+                      backgroundColor: '#ffffff',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                      transition: 'left 0.2s ease',
+                    }}
+                  />
+                </button>
+              </div>
+
+              {/* Inline: 2FA Setup */}
+              {feature.key === '2fa' && show2faSetup && (
+                <div className="ml-14 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="h-4 w-4 text-emerald-600" />
+                    <p className="text-sm font-medium text-foreground">Setup Two-Factor Authentication</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Scan this QR code with your authenticator app, then enter the 6-digit code below.
+                  </p>
+                  {qrData ? (
+                    <img
+                      src={(qrData as any).qrDataUrl ?? (qrData as any).qrCode ?? (qrData as any).qrCodeUrl}
+                      alt="2FA QR Code"
+                      className="w-36 h-36 border border-border rounded-lg"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-36 w-36 border border-border rounded-lg bg-white dark:bg-surface">
+                      <span className="text-sm text-muted-foreground">Generating QR...</span>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="6-digit code"
+                      value={totpCode}
+                      onChange={(e) => setTotpCode(e.target.value)}
+                      maxLength={6}
+                      className="max-w-40"
+                    />
+                    <Button onClick={() => verify2faMutation.mutate()} loading={verify2faMutation.isPending} disabled={totpCode.length !== 6}>
+                      Verify
+                    </Button>
+                    <Button variant="outline" onClick={() => setShow2faSetup(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Inline: 2FA Disable */}
+              {feature.key === '2fa' && show2faDisable && (
+                <div className="ml-14 rounded-xl border border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10 p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-red-600" />
+                    <p className="text-sm font-medium text-foreground">Disable Two-Factor Authentication</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Enter the 6-digit code from your authenticator app to confirm disabling 2FA.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="6-digit code"
+                      value={disableTotpCode}
+                      onChange={(e) => setDisableTotpCode(e.target.value.replace(/\D/g, ''))}
+                      maxLength={6}
+                      className="max-w-40"
+                    />
+                    <Button
+                      onClick={() => disable2faMutation.mutate()}
+                      loading={disable2faMutation.isPending}
+                      disabled={disableTotpCode.length !== 6}
+                      style={{ backgroundColor: '#ef4444', color: '#fff', borderColor: '#ef4444' }}
+                    >
+                      Disable 2FA
+                    </Button>
+                    <Button variant="outline" onClick={() => { setShow2faDisable(false); setDisableTotpCode(''); }}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Inline: Session Timeout Config */}
+              {feature.key === 'session-timeout' && secSettings?.sessionTimeoutEnabled && (
+                <div className="ml-14 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 space-y-2">
+                  <p className="text-sm font-medium text-foreground">Timeout Duration</p>
+                  <p className="text-xs text-muted-foreground">
+                    Users will be automatically signed out after this period of inactivity.
+                  </p>
+                  <select
+                    value={secSettings.sessionTimeoutMinutes}
+                    onChange={(e) => {
+                      updateSettingsMutation.mutate({ sessionTimeoutMinutes: parseInt(e.target.value, 10) });
+                      toast.success('Timeout duration updated');
+                    }}
+                    className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground"
+                  >
+                    <option value={5}>5 minutes</option>
+                    <option value={15}>15 minutes</option>
+                    <option value={30}>30 minutes</option>
+                    <option value={60}>1 hour</option>
+                    <option value={120}>2 hours</option>
+                    <option value={240}>4 hours</option>
+                    <option value={480}>8 hours</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Inline: IP Whitelist Config */}
+              {feature.key === 'ip-whitelist' && secSettings?.ipWhitelistEnabled && (
+                <div className="ml-14 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 space-y-3">
+                  <p className="text-sm font-medium text-foreground">Whitelisted IP Addresses</p>
+                  <p className="text-xs text-muted-foreground">
+                    Only requests from these IPs will be allowed. Leave empty to allow all.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="e.g. 192.168.1.0/24 or 10.0.0.1"
+                      value={newIp}
+                      onChange={(e) => setNewIp(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && addIp()}
+                      className="flex-1"
+                    />
+                    <Button size="sm" onClick={addIp} leftIcon={<Plus className="h-3.5 w-3.5" />}>
+                      Add
+                    </Button>
+                  </div>
+                  {(secSettings.whitelistedIps ?? []).length > 0 ? (
+                    <div className="space-y-1.5">
+                      {secSettings.whitelistedIps.map((ip) => (
+                        <div key={ip} className="flex items-center justify-between rounded-lg bg-white dark:bg-surface px-3 py-2 border border-border">
+                          <code className="text-sm font-mono text-foreground">{ip}</code>
+                          <button
+                            onClick={() => removeIp(ip)}
+                            className="rounded p-1 text-muted-foreground hover:text-danger hover:bg-danger/10 transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">No IPs whitelisted yet. All IPs are currently allowed.</p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
       )}
 
-      {/* Session Timeout Config */}
-      {secSettings?.sessionTimeoutEnabled && (
-        <div className="rounded-2xl border border-border bg-surface p-6 space-y-3">
-          <h2 className="font-semibold text-foreground flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" /> Session Timeout Duration
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Users will be automatically signed out after this period of inactivity.
-          </p>
-          <div className="flex items-center gap-3">
-            <select
-              value={secSettings.sessionTimeoutMinutes}
-              onChange={(e) => {
-                updateSettingsMutation.mutate({ sessionTimeoutMinutes: parseInt(e.target.value, 10) });
-                toast.success('Timeout duration updated');
-              }}
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground"
-            >
-              <option value={5}>5 minutes</option>
-              <option value={15}>15 minutes</option>
-              <option value={30}>30 minutes</option>
-              <option value={60}>1 hour</option>
-              <option value={120}>2 hours</option>
-              <option value={240}>4 hours</option>
-              <option value={480}>8 hours</option>
-            </select>
-          </div>
-        </div>
-      )}
-
-      {/* IP Whitelist Management */}
-      {secSettings?.ipWhitelistEnabled && (
-        <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-          <h2 className="font-semibold text-foreground flex items-center gap-2">
-            <Globe className="h-4 w-4 text-primary" /> Whitelisted IP Addresses
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Only requests from these IPs will be allowed. Leave empty to allow all.
-          </p>
-          <div className="flex gap-2">
-            <Input
-              placeholder="e.g. 192.168.1.0/24 or 10.0.0.1"
-              value={newIp}
-              onChange={(e) => setNewIp(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addIp()}
-              className="flex-1"
-            />
-            <Button size="sm" onClick={addIp} leftIcon={<Plus className="h-3.5 w-3.5" />}>
-              Add
-            </Button>
-          </div>
-          {(secSettings.whitelistedIps ?? []).length > 0 ? (
-            <div className="space-y-1.5">
-              {secSettings.whitelistedIps.map((ip) => (
-                <div key={ip} className="flex items-center justify-between rounded-lg bg-surface-muted px-3 py-2">
-                  <code className="text-sm font-mono text-foreground">{ip}</code>
-                  <button
-                    onClick={() => removeIp(ip)}
-                    className="rounded p-1 text-muted-foreground hover:text-danger hover:bg-danger/10 transition-colors"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground italic">No IPs whitelisted yet. All IPs are currently allowed.</p>
-          )}
-        </div>
-      )}
-
-      {/* 2FA Setup */}
-      {show2faSetup && (
-        <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <Smartphone className="h-4 w-4 text-primary" />
-            <h2 className="font-semibold text-foreground">Setup Two-Factor Authentication</h2>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Scan this QR code with your authenticator app, then enter the 6-digit code below.
-          </p>
-          {qrData ? (
-            <img
-              src={(qrData as any).qrCode ?? (qrData as any).qrCodeUrl ?? (qrData as any).otpauth}
-              alt="2FA QR Code"
-              className="w-40 h-40 border border-border rounded-lg"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-40 w-40 border border-border rounded-lg bg-surface-muted">
-              <span className="text-sm text-muted-foreground">Generating QR code...</span>
-            </div>
-          )}
-          <div className="flex gap-2">
-            <Input
-              placeholder="6-digit code"
-              value={totpCode}
-              onChange={(e) => setTotpCode(e.target.value)}
-              maxLength={6}
-              className="max-w-40"
-            />
-            <Button onClick={() => verify2faMutation.mutate()} loading={verify2faMutation.isPending} disabled={totpCode.length !== 6}>
-              Verify
-            </Button>
-            <Button variant="outline" onClick={() => setShow2faSetup(false)}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Change Password */}
       <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-        <h2 className="font-semibold text-foreground">Change Password</h2>
-        <Input
-          type="password"
-          label="Current Password"
-          value={pwForm.current}
-          onChange={(e) => setPwForm((f) => ({ ...f, current: e.target.value }))}
-        />
-        <Input
-          type="password"
-          label="New Password"
-          value={pwForm.next}
-          onChange={(e) => setPwForm((f) => ({ ...f, next: e.target.value }))}
-        />
-        <Input
-          type="password"
-          label="Confirm New Password"
-          value={pwForm.confirm}
-          onChange={(e) => setPwForm((f) => ({ ...f, confirm: e.target.value }))}
-        />
+        <h2 className="font-semibold font-display text-foreground">Change Password</h2>
+        <div style={{ position: 'relative' }}>
+          <Input
+            type={showPw.current ? 'text' : 'password'}
+            label="Current Password"
+            value={pwForm.current}
+            onChange={(e) => setPwForm((f) => ({ ...f, current: e.target.value }))}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPw((s) => ({ ...s, current: !s.current }))}
+            style={{ position: 'absolute', right: 12, top: 38, background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}
+          >
+            {showPw.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <Input
+            type={showPw.next ? 'text' : 'password'}
+            label="New Password"
+            value={pwForm.next}
+            onChange={(e) => setPwForm((f) => ({ ...f, next: e.target.value }))}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPw((s) => ({ ...s, next: !s.next }))}
+            style={{ position: 'absolute', right: 12, top: 38, background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}
+          >
+            {showPw.next ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <Input
+            type={showPw.confirm ? 'text' : 'password'}
+            label="Confirm New Password"
+            value={pwForm.confirm}
+            onChange={(e) => setPwForm((f) => ({ ...f, confirm: e.target.value }))}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPw((s) => ({ ...s, confirm: !s.confirm }))}
+            style={{ position: 'absolute', right: 12, top: 38, background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}
+          >
+            {showPw.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <div className="flex justify-end">
           <Button
             onClick={handleChangePw}
@@ -379,13 +458,13 @@ export default function SecuritySettingsPage() {
 
       {/* Active Sessions */}
       <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-        <h2 className="font-semibold text-foreground">Active Sessions</h2>
+        <h2 className="font-semibold font-display text-foreground">Active Sessions</h2>
         <div className="space-y-2">
           {sessions.map((s: any) => (
             <div key={s.id} className="flex items-center justify-between rounded-lg bg-surface-muted px-3 py-2">
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  {s.userAgent ?? 'Unknown device'}
+                  {s.deviceInfo ?? s.userAgent ?? 'Unknown device'}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {s.ipAddress} · Last active {formatDate(s.lastUsedAt ?? s.createdAt)}

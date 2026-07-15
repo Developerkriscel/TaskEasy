@@ -24,7 +24,10 @@ export function useLogin() {
     },
 
     onError: (err) => {
-      toast.error(getApiError(err));
+      const msg = getApiError(err);
+      if (!msg.toLowerCase().includes('2fa code required')) {
+        toast.error(msg);
+      }
     },
   });
 }

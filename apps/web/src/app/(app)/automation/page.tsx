@@ -74,7 +74,7 @@ export default function AutomationPage() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-indigo-500" />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Automation Rules</h1>
+          <h1 className="text-xl font-bold font-display text-foreground">Automation Rules</h1>
         </div>
         <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setCreateModal(true)}>
           New Rule
@@ -92,11 +92,11 @@ export default function AutomationPage() {
           {rules.map((rule: any) => (
             <div
               key={rule.id}
-              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 flex items-center gap-4"
+              className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow p-4 flex items-center gap-4"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium text-slate-800 dark:text-slate-200">{rule.name}</p>
+                  <p className="font-medium text-foreground font-display">{rule.name}</p>
                   <span className={`text-xs rounded-full px-2 py-0.5 ${rule.isActive ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
                     {rule.isActive ? 'Active' : 'Inactive'}
                   </span>
@@ -104,7 +104,7 @@ export default function AutomationPage() {
                 {rule.description && (
                   <p className="text-sm text-slate-500 mt-0.5 truncate">{rule.description}</p>
                 )}
-                <div className="flex gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
                   <span>When: <strong className="text-slate-600 dark:text-slate-400">{rule.trigger}</strong></span>
                   <span>→</span>
                   <span>Then: <strong className="text-slate-600 dark:text-slate-400">{rule.action}</strong></span>
@@ -156,7 +156,7 @@ export default function AutomationPage() {
               <option key={t.value} value={t.value}>{t.label}{t.live ? '' : ' (not yet wired)'}</option>
             ))}
           </Select>
-          <p className="text-xs text-slate-500 dark:text-slate-400 -mt-2">
+          <p className="text-xs text-muted-foreground -mt-2">
             Task Created, Task Completed, and FMS Step Completed fire instantly. Checklist Missed is
             checked hourly. Task Overdue, SLA Breached, User Workload High, Project Health Low, and
             Approval Pending Too Long are checked every 30 minutes and fire at most once per day per item.
