@@ -14,7 +14,13 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Textarea } from '@/components/ui/Input';
 import { formatDate, formatDateTime, exportToExcel, exportToPdf } from '@/lib/utils';
-import type { ApprovalItemType, ApprovalMySubmissions, ApprovalQueueItem } from '@/types';
+import type { ApprovalItemType, ApprovalMySubmissions, ApprovalQueueItem, AttachmentInfo } from '@/types';
+
+function getViewUrl(att: AttachmentInfo): string {
+  const viewableInline = att.mimeType.startsWith('image/') || att.mimeType.startsWith('video/');
+  if (viewableInline) return att.url;
+  return `https://docs.google.com/gview?url=${encodeURIComponent(att.url)}&embedded=true`;
+}
 
 const APPROVER_ROLES = ['ADMIN', 'MANAGER', 'COMPANY_OWNER', 'SAAS_OWNER'];
 const TRACKING_ROLES = ['EMPLOYEE', 'TEAM_LEAD', 'VIEWER'];
@@ -333,17 +339,15 @@ export default function ApprovalsPage() {
                   <Paperclip className="h-3.5 w-3.5" /> Attachments ({actionItem.doerAttachments.length})
                 </p>
                 {actionItem.doerAttachments.map((att) => (
-                  <a
+                  <div
                     key={att.id}
-                    href={att.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm hover:bg-surface-muted transition-colors"
+                    className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                   >
                     <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <span className="flex-1 truncate text-foreground">{att.originalName}</span>
-                    <span className="text-xs text-primary font-medium flex-shrink-0">View</span>
-                  </a>
+                    <a href={getViewUrl(att)} target="_blank" rel="noreferrer" className="text-xs text-primary font-medium flex-shrink-0 hover:underline">View</a>
+                    <a href={att.url} download={att.originalName} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground font-medium flex-shrink-0 hover:underline">Download</a>
+                  </div>
                 ))}
               </div>
             )}
