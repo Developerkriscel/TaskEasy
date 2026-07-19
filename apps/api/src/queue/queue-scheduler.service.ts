@@ -40,6 +40,13 @@ export class QueueSchedulerService implements OnModuleInit {
       );
       this.logger.log('Scheduled recurring checklist missed-task sweep (hourly) — marks overdue PENDING tasks LATE');
 
+      await this.checklistQueue.add(
+        'generate-daily',
+        {},
+        { repeat: { cron: '0 0 * * *' } }, // midnight every day
+      );
+      this.logger.log('Scheduled daily checklist task generation (midnight) — creates today\'s task for DAILY frequency masters');
+
       await this.escalationQueue.add(
         'check-punch-in',
         {},

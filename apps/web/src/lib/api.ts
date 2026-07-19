@@ -45,7 +45,7 @@ export const authApi = {
   changePassword: (currentPassword: string, newPassword: string) =>
     apiPatch<void>('/auth/change-password', { currentPassword, newPassword }),
 
-  setup2fa: () => apiPost<{ qrCode: string; secret: string }>('/auth/2fa/setup'),
+  setup2fa: () => apiPost<{ qrDataUrl: string; qrCode?: string; secret: string }>('/auth/2fa/setup'),
 
   verify2fa: (totpCode: string) => apiPost<void>('/auth/2fa/verify', { totpCode }),
 
@@ -312,6 +312,9 @@ export const delegationApi = {
 
   rework: (id: string, data: { reworkRemark: string }) =>
     apiPatch<DelegationTask>(`/delegation/${id}/rework`, data),
+
+  bulkDelete: (ids: string[]) =>
+    apiPost<{ deleted: number }>('/delegation/bulk-delete', { ids }),
 };
 
 // ─── Work Requests ────────────────────────────────────────────────────────────
@@ -339,6 +342,9 @@ export const workRequestApi = {
 
   rework: (id: string, data: { reworkRemark: string }) =>
     apiPatch<WorkRequest>(`/work-requests/${id}/rework`, data),
+
+  bulkDelete: (ids: string[]) =>
+    apiPost<{ deleted: number }>('/work-requests/bulk-delete', { ids }),
 };
 
 // ─── Checklist ────────────────────────────────────────────────────────────────
@@ -366,6 +372,9 @@ export const checklistApi = {
 
   bulkComplete: (data: { taskIds: string[]; remarks: string; attachmentIds?: string[] }) =>
     apiPost<{ completed: number }>('/checklist/tasks/bulk-complete', data),
+
+  bulkDelete: (ids: string[]) =>
+    apiPost<{ deleted: number }>('/checklist/tasks/bulk-delete', { ids }),
 };
 
 // ─── FMS ──────────────────────────────────────────────────────────────────────

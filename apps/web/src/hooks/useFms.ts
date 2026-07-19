@@ -19,7 +19,7 @@ export function useCreateFmsWorkflow() {
     mutationFn: fmsApi.createWorkflow,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['fms'] });
-      toast.success('Workflow created');
+      toast.success('Workflow is live!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -40,7 +40,7 @@ export function useAddFmsStep() {
     mutationFn: fmsApi.addStep,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['fms'] });
-      toast.success('Step added');
+      toast.success('Step added!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -54,7 +54,7 @@ export function useCompleteFmsStep() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['fms'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('FMS step completed');
+      toast.success('Step done!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

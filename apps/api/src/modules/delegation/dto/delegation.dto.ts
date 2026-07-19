@@ -27,9 +27,10 @@ export class CreateDelegationTaskDto {
   @ArrayMaxSize(50)  // MI-01 fix: prevent bulk DoS via huge array
   delegatedToIds: string[];
 
-  @ApiProperty()
+  @ApiPropertyOptional({ default: 'NA' })
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string = 'NA';
 
   @ApiProperty({ example: 'Follow up with client for payment confirmation' })
   @IsString()
@@ -106,9 +107,10 @@ export class CreateDelegationBulkDto {
   @ArrayMaxSize(50)
   delegatedToIds: string[];
 
-  @ApiProperty()
+  @ApiPropertyOptional({ default: 'NA' })
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string = 'NA';
 
   @ApiProperty({ type: [BulkDelegationTaskDto] })
   @IsArray()

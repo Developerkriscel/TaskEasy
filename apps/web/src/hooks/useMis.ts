@@ -36,7 +36,7 @@ export function useSaveWeeklyTarget() {
     mutationFn: misApi.saveWeeklyTarget,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['mis'] });
-      toast.success('Weekly target saved');
+      toast.success('Target set!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -56,7 +56,7 @@ export function useSaveSnapshot() {
     mutationFn: misApi.saveSnapshot,
     onSuccess: (res: any) => {
       qc.invalidateQueries({ queryKey: ['mis'] });
-      toast.success(res?.message ?? 'Snapshot saved');
+      toast.success('Snapshot saved!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

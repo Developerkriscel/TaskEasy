@@ -10,7 +10,7 @@ import { z } from 'zod';
 
 export const delegationSchema = z.object({
   delegatedToIds: z.array(z.string()).min(1, 'Select at least one person to delegate to'),
-  projectId: z.string().min(1, 'Project is required'),
+  projectId: z.string().default('NA'),
   title: z.string().trim().min(5, 'Task title must be at least 5 characters'),
   description: z.string().optional(),
   targetDate: z.string().min(1, 'Target date is required'),
@@ -30,7 +30,7 @@ const delegationTaskDraftSchema = z.object({
 
 export const delegationBulkSchema = z.object({
   delegatedToIds: z.array(z.string()).min(1, 'Select at least one person to delegate to'),
-  projectId: z.string().min(1, 'Project is required'),
+  projectId: z.string().default('NA'),
   tasks: z.array(delegationTaskDraftSchema).min(1, 'Add at least one task'),
 });
 export type DelegationBulkFormValues = z.infer<typeof delegationBulkSchema>;
@@ -44,7 +44,7 @@ export type DelegationSubmitFormValues = z.infer<typeof delegationSubmitSchema>;
 
 export const workRequestSchema = z.object({
   requestForId: z.string().min(1, 'Please select who this request is for'),
-  projectId: z.string().min(1, 'Project is required'),
+  projectId: z.string().default('NA'),
   title: z.string().trim().min(1, 'Title is required'),
   description: z.string().optional(),
   deadlineDate: z.string().min(1, 'Deadline date is required'),
@@ -56,7 +56,7 @@ export type WorkRequestFormValues = z.infer<typeof workRequestSchema>;
 
 export const checklistSchema = z.object({
   assignedToIds: z.array(z.string()).min(1, 'Select at least one employee'),
-  projectId: z.string().min(1, 'Project is required'),
+  projectId: z.string().default('NA'),
   title: z.string().trim().min(1, 'Task title is required'),
   frequency: z.enum(['DAILY', 'WEEKLY', 'FORTNIGHTLY', 'MONTHLY', 'QUARTERLY', 'HALF_YEARLY', 'YEARLY', 'ONE_TIME']),
   startDate: z.string().min(1, 'Start date is required'),

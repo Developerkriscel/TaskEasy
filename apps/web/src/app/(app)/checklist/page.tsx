@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Clock, FileSpreadsheet, FileText, Plus, Sparkles, X } from 'lucide-react';
+import { Clock, FileSpreadsheet, FileText, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { checklistApi } from '@/lib/api';
 import { getApiError } from '@/lib/axios';
@@ -184,7 +184,7 @@ function ChecklistItemCard({
       <div className="p-5 space-y-4">
         {/* Task Detail */}
         <div>
-          <label htmlFor={`${id}-title`} className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+          <label htmlFor={`${id}-title`} className="block text-xs font-medium text-muted-foreground mb-1">
             Task Detail
           </label>
           <textarea
@@ -192,7 +192,7 @@ function ChecklistItemCard({
             rows={3}
             value={item.title}
             onChange={(e) => onChange({ title: e.target.value })}
-            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10 resize-none"
             placeholder="Enter task description..."
           />
         </div>
@@ -201,11 +201,11 @@ function ChecklistItemCard({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-end">
           {/* Frequency */}
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Frequency</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">Frequency</label>
             <select
               value={item.frequency}
               onChange={(e) => onChange({ frequency: e.target.value, endDate: '', days: [], extraDates: [] })}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             >
               {FREQUENCIES.map((f) => (
                 <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase().replace(/_/g, ' ')}</option>
@@ -215,20 +215,20 @@ function ChecklistItemCard({
 
           {/* Start Date (all) */}
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+            <label className="block text-xs font-medium text-muted-foreground mb-1">
               {item.frequency === ONE_TIME ? 'Due Date' : 'Start Date'}
             </label>
             <input
               type="date"
               value={item.startDate}
               onChange={(e) => onChange({ startDate: e.target.value })}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
 
           {/* Start Time (all) */}
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+            <label className="block text-xs font-medium text-muted-foreground mb-1">
               {item.frequency === ONE_TIME ? 'Due Time' : 'Start Time'}
             </label>
             <div className="relative">
@@ -236,7 +236,7 @@ function ChecklistItemCard({
                 type="time"
                 value={item.startTime}
                 onChange={(e) => onChange({ startTime: e.target.value })}
-                className="w-full rounded-lg border border-border bg-surface px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-md border border-border bg-surface px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
               />
               <Clock className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
             </div>
@@ -249,9 +249,9 @@ function ChecklistItemCard({
               id={`${id}-attach`}
               checked={item.attachmentRequired}
               onChange={(e) => onChange({ attachmentRequired: e.target.checked })}
-              className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 rounded border-border text-primary focus:ring-primary/10"
             />
-            <label htmlFor={`${id}-attach`} className="text-sm text-slate-600 dark:text-slate-400 select-none">
+            <label htmlFor={`${id}-attach`} className="text-sm text-muted-foreground select-none">
               Attachment Required?
             </label>
           </div>
@@ -263,14 +263,14 @@ function ChecklistItemCard({
             <label className="block text-xs font-semibold text-foreground mb-2">Day(s)</label>
             <div className="flex flex-wrap gap-4">
               {WEEK_DAYS.map((day) => (
-                <label key={day} className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+                <label key={day} className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={item.days.includes(day)}
                     onChange={(e) => onChange({
                       days: e.target.checked ? [...item.days, day] : item.days.filter((d) => d !== day),
                     })}
-                    className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary/10"
                   />
                   {day}
                 </label>
@@ -297,7 +297,7 @@ function ChecklistItemCard({
                       dates[i] = e.target.value;
                       onChange({ extraDates: dates });
                     }}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                   />
                 </div>
               ))}
@@ -313,7 +313,7 @@ function ChecklistItemCard({
               type="date"
               value={item.extraDates[0] ?? ''}
               onChange={(e) => onChange({ extraDates: [e.target.value] })}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
         )}
@@ -333,7 +333,7 @@ function ChecklistItemCard({
                     dates[i] = e.target.value;
                     onChange({ extraDates: dates });
                   }}
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                 />
               ))}
             </div>
@@ -348,7 +348,7 @@ function ChecklistItemCard({
               type="date"
               value={item.extraDates[0] ?? ''}
               onChange={(e) => onChange({ extraDates: [e.target.value] })}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
         )}
@@ -366,7 +366,7 @@ function AssignChecklistTab({ onSuccess }: { onSuccess?: () => void } = {}) {
   const { data: projects = [] } = useActiveProjects();
 
   const [employeeIds, setEmployeeIds] = useState<string[]>([]);
-  const [projectId, setProjectId]     = useState('');
+  const [projectId, setProjectId]     = useState('NA');
   const [items, setItems]             = useState<ChecklistItem[]>([makeItem()]);
 
   const { mutate: createMaster, isPending } = useMutation({
@@ -382,7 +382,6 @@ function AssignChecklistTab({ onSuccess }: { onSuccess?: () => void } = {}) {
 
   function handleAssignAll() {
     if (employeeIds.length === 0) { toast.error('Select at least one employee'); return; }
-    if (!projectId)               { toast.error('Select a project'); return; }
 
     const invalid = items.findIndex((it) => !it.title.trim());
     if (invalid !== -1) { toast.error(`Add a task detail for Checklist Item #${invalid + 1}`); return; }
@@ -424,9 +423,9 @@ function AssignChecklistTab({ onSuccess }: { onSuccess?: () => void } = {}) {
           <select
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
           >
-            <option value="">Select Project...</option>
+            <option value="NA">NA</option>
             {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </div>
@@ -623,12 +622,12 @@ function PendingTasksTab({ mine, onRegisterExport }: { mine: boolean; onRegister
         }
       >
         <form className="space-y-3" onSubmit={hsDone((v) => complete(v))}>
-          <p className="text-sm text-slate-600 dark:text-slate-400">{doneTask?.title}</p>
+          <p className="text-sm text-muted-foreground">{doneTask?.title}</p>
           <Textarea label="Remarks *" error={eDone.remarks?.message} placeholder="Completion notes…" {...regDone('remarks')} />
           {doneTask?.attachmentRequired && (
-            <p className="text-xs text-amber-600">Proof attachment is required for this task.</p>
+            <p className="text-xs text-amber-600">Attachment is required for this task.</p>
           )}
-          <FileUpload label={doneTask?.attachmentRequired ? 'Proof / Attachments' : 'Attachments'} maxFiles={3} onChange={setDoneAttachIds} />
+          <FileUpload label="Attachments" maxFiles={5} onChange={setDoneAttachIds} />
         </form>
       </Modal>
 
@@ -642,14 +641,14 @@ function PendingTasksTab({ mine, onRegisterExport }: { mine: boolean; onRegister
         }
       >
         <form onSubmit={hsBulk((v) => bulkComplete(v))} className="space-y-3">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-muted-foreground">
             Same remarks will apply to all {selected.length} selected tasks.
           </p>
           {selectedNeedsAttachment && (
-            <p className="text-xs text-amber-600">One or more tasks require proof attachments.</p>
+            <p className="text-xs text-amber-600">One or more tasks require attachments.</p>
           )}
           <Textarea label="Remarks *" error={eBulk.remarks?.message} placeholder="Completion notes…" {...regBulk('remarks')} />
-          <FileUpload label={selectedNeedsAttachment ? 'Proof / Attachments' : 'Attachments'} maxFiles={5} onChange={setBulkAttachIds} />
+          <FileUpload label="Attachments" maxFiles={5} onChange={setBulkAttachIds} />
         </form>
       </Modal>
     </div>
@@ -660,8 +659,21 @@ function PendingTasksTab({ mine, onRegisterExport }: { mine: boolean; onRegister
 
 function TeamChecklistsTab({ onRegisterExport }: { onRegisterExport?: (fns: { excel: () => void; pdf: () => void }) => void } = {}) {
   const [filters, setFilters] = useState<FilterValues>({ period: 'ALL' });
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const { data: projects = [] } = useActiveProjects();
   const { data: users = [] }    = useActiveUsers();
+  const qc = useQueryClient();
+
+  const { mutate: bulkDelete, isPending: deleting } = useMutation({
+    mutationFn: (ids: string[]) => checklistApi.bulkDelete(ids),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['checklist'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      toast.success(`${data.deleted} checklist task(s) deleted`);
+    },
+    onError: (err) => toast.error(getApiError(err)),
+  });
 
   const apiParams = {
     ...(filters.status ? { status: filters.status } : {}),
@@ -716,8 +728,50 @@ function TeamChecklistsTab({ onRegisterExport }: { onRegisterExport?: (fns: { ex
         columns={columns} data={tasks} loading={isLoading} error={isError}
         onRetry={refetch} rowKey={(r) => r.id}
         searchable={false}
+        selectable
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        headerActions={
+          selectedIds.size > 0 ? (
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<Trash2 className="h-4 w-4" />}
+              onClick={() => setDeleteConfirm(true)}
+            >
+              Delete ({selectedIds.size})
+            </Button>
+          ) : undefined
+        }
         emptyMessage="No checklist tasks found"
       />
+
+      <Modal
+        open={deleteConfirm}
+        onClose={() => setDeleteConfirm(false)}
+        title="Delete Checklist Tasks"
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+            <Button
+              variant="danger"
+              loading={deleting}
+              onClick={() => {
+                bulkDelete(Array.from(selectedIds), {
+                  onSuccess: () => { setSelectedIds(new Set()); setDeleteConfirm(false); },
+                });
+              }}
+            >
+              Delete {selectedIds.size} Task(s)
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          Are you sure you want to permanently delete {selectedIds.size} selected checklist task(s)? This action cannot be undone.
+        </p>
+      </Modal>
     </div>
   );
 }

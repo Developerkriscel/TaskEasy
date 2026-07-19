@@ -9,6 +9,14 @@ export class CalendarService {
     private hierarchy: HierarchyService,
   ) {}
 
+  private recurringDateForYear(source: Date | null | undefined, year: number): Date | null {
+    if (!source) return null;
+    const month = source.getUTCMonth();
+    const day = source.getUTCDate();
+    const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    return new Date(Date.UTC(year, month, Math.min(day, lastDayOfMonth), 12, 0, 0));
+  }
+
   async getEvents(
     tenantId: string,
     userId: string,
@@ -22,7 +30,7 @@ export class CalendarService {
     // regardless of which team they actually manage.
     const visibleIds = await this.hierarchy.getVisibleUserIds(userId, role, tenantId);
 
-    const [delegation, workRequests, checklist, fmsTasks, holidays] = await Promise.all([
+    const [delegation, workRequests, checklist, fmsTasks, holidays, celebrationUsers] = await Promise.all([
       this.prisma.delegationTask.findMany({
         where: {
           tenantId,
@@ -74,7 +82,63 @@ export class CalendarService {
         },
         select: { id: true, name: true, date: true },
       }),
+      this.prisma.user.findMany({
+        where: {
+          tenantId,
+          status: 'ACTIVE',
+          ...(visibleIds ? { id: { in: visibleIds } } : {}),
+          OR: [
+            { dateOfBirth: { not: null } },
+            { anniversaryDate: { not: null } },
+            { joiningDate: { not: null } },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          dateOfBirth: true,
+          anniversaryDate: true,
+          joiningDate: true,
+        },
+      }),
     ]);
+
+    const celebrationEvents = celebrationUsers.flatMap((user) => {
+      const events: Array<{
+        id: string;
+        title: string;
+        date: Date;
+        status: string;
+        type: 'BIRTHDAY' | 'ANNIVERSARY';
+      }> = [];
+      const fromTime = from.getTime();
+      const toTime = to.getTime();
+
+      const birthdayDate = this.recurringDateForYear(user.dateOfBirth, from.getUTCFullYear());
+      if (birthdayDate && birthdayDate.getTime() >= fromTime && birthdayDate.getTime() <= toTime) {
+        events.push({
+          id: `birthday-${user.id}-${from.getUTCFullYear()}`,
+          title: `${user.name}'s Birthday`,
+          date: birthdayDate,
+          status: 'CELEBRATION',
+          type: 'BIRTHDAY',
+        });
+      }
+
+      const anniversarySource = user.anniversaryDate ?? user.joiningDate;
+      const anniversaryDate = this.recurringDateForYear(anniversarySource, from.getUTCFullYear());
+      if (anniversaryDate && anniversaryDate.getTime() >= fromTime && anniversaryDate.getTime() <= toTime) {
+        events.push({
+          id: `anniversary-${user.id}-${from.getUTCFullYear()}`,
+          title: `${user.name}'s Work Anniversary`,
+          date: anniversaryDate,
+          status: 'CELEBRATION',
+          type: 'ANNIVERSARY',
+        });
+      }
+
+      return events;
+    });
 
     return {
       delegation: delegation.map((t) => ({ ...t, type: 'DELEGATION', date: t.targetDate })),
@@ -97,6 +161,7 @@ export class CalendarService {
         date: h.date,
         type: 'HOLIDAY' as const,
       })),
+      celebrations: celebrationEvents,
     };
   }
 }

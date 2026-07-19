@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiGet } from '@/lib/axios';
-
-import { useActiveUsers } from '@/hooks/useUsers';
+import { Modal } from '@/components/ui/Modal';
 
 interface CalendarEvent {
   id: string;
@@ -33,46 +32,27 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
+function eventIcon(type: CalendarEvent['type']) {
+  switch (type) {
+    case 'BIRTHDAY': return 'Birthday';
+    case 'ANNIVERSARY': return 'Anniversary';
+    case 'HOLIDAY': return 'Holiday';
+    case 'DELEGATION': return 'Delegation';
+    case 'WORK_REQUEST': return 'Work Request';
+    case 'CHECKLIST': return 'Checklist';
+    case 'FMS': return 'FMS';
+    default: return type;
+  }
+}
+
 export default function CalendarPage() {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const from = new Date(year, month, 1).toISOString();
   const to = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
-
-  const { data: activeUsers = [] } = useActiveUsers();
-
-  const celebrationEvents: CalendarEvent[] = useMemo(() => {
-    const evts: CalendarEvent[] = [];
-    for (const u of activeUsers as any[]) {
-      if (u.dateOfBirth) {
-        const dob = new Date(u.dateOfBirth);
-        if (dob.getMonth() === month) {
-          evts.push({
-            id: `bday-${u.id}`,
-            title: `🎂 ${u.name}'s Birthday`,
-            date: new Date(year, month, dob.getDate()).toISOString(),
-            status: 'CELEBRATION',
-            type: 'BIRTHDAY',
-          });
-        }
-      }
-      if (u.anniversaryDate) {
-        const ann = new Date(u.anniversaryDate);
-        if (ann.getMonth() === month) {
-          evts.push({
-            id: `anniv-${u.id}`,
-            title: `🎉 ${u.name}'s Anniversary`,
-            date: new Date(year, month, ann.getDate()).toISOString(),
-            status: 'CELEBRATION',
-            type: 'ANNIVERSARY',
-          });
-        }
-      }
-    }
-    return evts;
-  }, [activeUsers, year, month]);
 
   const { data: events, isLoading } = useQuery({
     queryKey: ['calendar', year, month],
@@ -83,6 +63,7 @@ export default function CalendarPage() {
         checklist: CalendarEvent[];
         fms: CalendarEvent[];
         holidays: CalendarEvent[];
+        celebrations: CalendarEvent[];
       }>('/calendar/events', { from, to }),
   });
 
@@ -92,7 +73,7 @@ export default function CalendarPage() {
     ...(events?.workRequests ?? []),
     ...(events?.checklist ?? []),
     ...(events?.fms ?? []),
-    ...celebrationEvents,
+    ...(events?.celebrations ?? []),
   ];
 
   const holidayDays = new Set(
@@ -120,6 +101,8 @@ export default function CalendarPage() {
   };
 
   const monthName = new Date(year, month).toLocaleString('default', { month: 'long' });
+  const selectedDate = selectedDay ? new Date(year, month, selectedDay) : null;
+  const selectedEvents = selectedDay ? (eventsByDay[selectedDay] ?? []) : [];
 
   return (
     <div className="space-y-5">
@@ -173,12 +156,26 @@ export default function CalendarPage() {
               return (
                 <div
                   key={day}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedDay(day)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedDay(day);
+                    }
+                  }}
                   className={`min-h-[100px] p-1.5 border-b border-r border-slate-100 dark:border-slate-800 ${
-                    isHoliday ? 'bg-red-50 dark:bg-red-950/20' : ''
-                  }`}
+                    isToday
+                      ? 'bg-amber-50 ring-2 ring-inset ring-amber-300 dark:bg-amber-950/20 dark:ring-amber-500/60'
+                      : isHoliday
+                        ? 'bg-red-50 dark:bg-red-950/20'
+                        : ''
+                  } cursor-pointer transition hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/35`}
+                  aria-label={`${day} ${monthName} ${year}, ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}`}
                 >
                   <div className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
-                    isToday ? 'bg-indigo-600 text-contrast' : 'text-foreground'
+                    isToday ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/30' : 'text-foreground'
                   }`}>
                     {day}
                   </div>
@@ -193,7 +190,7 @@ export default function CalendarPage() {
                       </div>
                     ))}
                     {dayEvents.length > 3 && (
-                      <div className="text-xs text-muted-foreground pl-1">+{dayEvents.length - 3} more</div>
+                      <div className="text-xs font-medium text-primary pl-1">+{dayEvents.length - 3} more - view all</div>
                     )}
                   </div>
                 </div>
@@ -202,6 +199,48 @@ export default function CalendarPage() {
           </div>
         )}
       </div>
+
+      <Modal
+        open={selectedDay !== null}
+        onClose={() => setSelectedDay(null)}
+        title={selectedDate ? selectedDate.toLocaleDateString(undefined, {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        }) : 'Calendar details'}
+        size="lg"
+      >
+        {selectedEvents.length > 0 ? (
+          <div className="space-y-3">
+            {selectedEvents.map((ev) => (
+              <div key={ev.id} className="rounded-lg border border-border bg-surface-muted p-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-semibold text-foreground">{ev.title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(ev.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  <span className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_COLORS[ev.type] ?? ''}`}>
+                    {eventIcon(ev.type)}
+                  </span>
+                </div>
+                {ev.status && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Status: <span className="font-medium text-foreground">{ev.status.replace(/_/g, ' ')}</span>
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border bg-surface-muted p-6 text-center">
+            <p className="text-sm font-medium text-foreground">No events on this date</p>
+            <p className="mt-1 text-xs text-muted-foreground">Birthdays, anniversaries, holidays, and task dates will appear here.</p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

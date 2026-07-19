@@ -69,11 +69,14 @@ export class DelegationService {
       }
     }
 
-    // Validate project
-    const project = await this.prisma.project.findFirst({
-      where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
-    });
-    if (!project) throw new BadRequestException('Project not found or inactive');
+    // Validate project (skip if NA or not provided)
+    const hasProject = dto.projectId && dto.projectId !== 'NA';
+    if (hasProject) {
+      const project = await this.prisma.project.findFirst({
+        where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
+      });
+      if (!project) throw new BadRequestException('Project not found or inactive');
+    }
 
     // Get delegator info for emails
     const delegator = await this.prisma.user.findUnique({
@@ -125,7 +128,7 @@ export class DelegationService {
             taskId,
             delegatedById,
             delegatedToId: doer.id,
-            projectId: dto.projectId,
+            projectId: hasProject ? dto.projectId : undefined,
             title: dto.title,
             description: dto.description,
             targetDate,
@@ -501,6 +504,15 @@ export class DelegationService {
     return updated;
   }
 
+  async bulkDelete(ids: string[], tenantId: string) {
+    const result = await this.prisma.delegationTask.deleteMany({
+      where: { id: { in: ids }, tenantId },
+    });
+    await this.redis.delByPattern(CachePatterns.dashboard(tenantId));
+    await this.redis.delByPattern(CachePatterns.mis(tenantId));
+    return { deleted: result.count };
+  }
+
   async getPendingApprovalCount(tenantId: string, approverId: string): Promise<number> {
     return this.prisma.delegationTask.count({
       where: { tenantId, delegatedById: approverId, status: 'SEND_FOR_APPROVAL' },
@@ -509,7 +521,7 @@ export class DelegationService {
 
   async getMyPendingCount(tenantId: string, userId: string): Promise<number> {
     return this.prisma.delegationTask.count({
-      where: { tenantId, delegatedToId: userId, status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK', 'SEND_FOR_APPROVAL'] } },
+      where: { tenantId, delegatedToId: userId, status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK'] } },
     });
   }
 

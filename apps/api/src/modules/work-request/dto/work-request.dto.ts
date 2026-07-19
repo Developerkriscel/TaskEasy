@@ -8,9 +8,10 @@ export class CreateWorkRequestDto {
   @IsString()
   requestForId: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ default: 'NA' })
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string = 'NA';
 
   @ApiProperty({ example: 'Please prepare the client onboarding checklist' })
   @IsString()

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { Upload, X, FileText, Image, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, X, FileText, Image, Video, AlertCircle, Loader2 } from 'lucide-react';
 import { cn, formatFileSize } from '@/lib/utils';
 import { uploadsApi } from '@/lib/api';
 import type { UploadResult } from '@/types';
@@ -18,7 +18,7 @@ interface FileUploadProps {
   initialPublicIds?: string[];
   accept?: string;
   maxFiles?: number;
-  maxSizeBytes?: number;
+  maxTotalSizeBytes?: number;
   label?: string;
   className?: string;
   /** Compact mode: renders a small button + inline file chips instead of the drag-drop zone */
@@ -26,24 +26,28 @@ interface FileUploadProps {
 }
 
 const ALLOWED_MIME_TYPES = [
-  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+  'image/jpeg',
   'application/pdf',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'text/plain', 'text/csv',
+  'application/vnd.ms-excel',
+  'video/mp4',
 ];
 
-const DEFAULT_MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+const ALLOWED_EXTENSIONS = '.jpeg,.jpg,.pdf,.docx,.xls,.xlsx,.mp4';
+
+const DEFAULT_MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB total for all files
 
 function fileIcon(mimeType: string) {
   if (mimeType.startsWith('image/')) return <Image className="h-4 w-4 text-accent" />;
+  if (mimeType.startsWith('video/')) return <Video className="h-4 w-4 text-accent" />;
   return <FileText className="h-4 w-4 text-muted-foreground" />;
 }
 
 export function FileUpload({
   onChange, initialPublicIds = [],
   accept, maxFiles = 5,
-  maxSizeBytes = DEFAULT_MAX_SIZE,
+  maxTotalSizeBytes = DEFAULT_MAX_TOTAL_SIZE,
   label = 'Attachments',
   className,
   compact = false,
@@ -58,23 +62,28 @@ export function FileUpload({
     onChange(files.map((f) => f.result.publicId));
   };
 
+  const currentTotalSize = uploaded.reduce((sum, f) => sum + f.result.size, 0);
+
   const uploadFiles = useCallback(
     async (fileList: File[]) => {
       setErrors([]);
 
-      // Validate
       const errs: string[] = [];
+      const existingTotal = uploaded.reduce((sum, f) => sum + f.result.size, 0);
+      let runningTotal = existingTotal;
+
       const valid = fileList.filter((f) => {
         if (uploaded.length + fileList.indexOf(f) + 1 > maxFiles) {
           errs.push(`Max ${maxFiles} files allowed`);
           return false;
         }
-        if (f.size > maxSizeBytes) {
-          errs.push(`${f.name}: exceeds ${formatFileSize(maxSizeBytes)} limit`);
+        if (!ALLOWED_MIME_TYPES.includes(f.type)) {
+          errs.push(`${f.name}: only JPEG, PDF, DOCX, XLS/XLSX, and MP4 files are allowed`);
           return false;
         }
-        if (!ALLOWED_MIME_TYPES.includes(f.type)) {
-          errs.push(`${f.name}: file type not allowed`);
+        runningTotal += f.size;
+        if (runningTotal > maxTotalSizeBytes) {
+          errs.push(`Total size exceeds ${formatFileSize(maxTotalSizeBytes)} limit`);
           return false;
         }
         return true;
@@ -96,7 +105,7 @@ export function FileUpload({
         setUploading(false);
       }
     },
-    [uploaded, maxFiles, maxSizeBytes],
+    [uploaded, maxFiles, maxTotalSizeBytes],
   );
 
   const handleRemove = async (publicId: string) => {
@@ -130,7 +139,7 @@ export function FileUpload({
           ref={inputRef}
           type="file"
           multiple
-          accept={accept ?? ALLOWED_MIME_TYPES.join(',')}
+          accept={accept ?? ALLOWED_EXTENSIONS}
           className="hidden"
           onChange={(e) => uploadFiles(Array.from(e.target.files ?? []))}
         />
@@ -189,7 +198,7 @@ export function FileUpload({
           ref={inputRef}
           type="file"
           multiple
-          accept={accept ?? ALLOWED_MIME_TYPES.join(',')}
+          accept={accept ?? ALLOWED_EXTENSIONS}
           className="hidden"
           onChange={(e) => uploadFiles(Array.from(e.target.files ?? []))}
         />
@@ -202,7 +211,7 @@ export function FileUpload({
           {uploading ? 'Uploading…' : 'Drag & drop files here, or click to browse'}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          PDF, Images, Word, Excel · max {formatFileSize(maxSizeBytes)} each
+          JPEG, PDF, DOCX, XLS, MP4 · max {maxFiles} files · {formatFileSize(maxTotalSizeBytes)} total
         </p>
       </div>
 

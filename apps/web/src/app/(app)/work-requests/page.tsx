@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FileSpreadsheet, FileText, Plus } from 'lucide-react';
+import { FileSpreadsheet, FileText, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { workRequestApi } from '@/lib/api';
-import { useWorkRequests, useCreateWorkRequest, useSubmitWorkRequest } from '@/hooks/useWorkRequest';
+import { useWorkRequests, useCreateWorkRequest, useSubmitWorkRequest, useBulkDeleteWorkRequest } from '@/hooks/useWorkRequest';
 import { useActiveProjects } from '@/hooks/useProjects';
 import { useActiveUsers } from '@/hooks/useUsers';
 import { useAuthStore } from '@/store/auth.store';
@@ -44,6 +44,8 @@ export default function WorkRequestsPage() {
   const [createModal, setCreateModal] = useState(false);
   const [submitModal, setSubmitModal] = useState<WorkRequest | null>(null);
   const [submitAttachmentIds, setSubmitAttachmentIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const { user } = useAuthStore();
   const currentUserId = user?.id ?? user?.sub ?? '';
@@ -66,6 +68,7 @@ export default function WorkRequestsPage() {
 
   const { mutate: create, isPending: creating } = useCreateWorkRequest();
   const { mutate: submit, isPending: submitting } = useSubmitWorkRequest();
+  const { mutate: bulkDelete, isPending: deleting } = useBulkDeleteWorkRequest();
 
   const {
     register,
@@ -76,7 +79,7 @@ export default function WorkRequestsPage() {
     resolver: zodResolver(workRequestSchema),
     defaultValues: {
       requestForId: '',
-      projectId: '',
+      projectId: 'NA',
       title: '',
       description: '',
       deadlineDate: '',
@@ -254,12 +257,55 @@ export default function WorkRequestsPage() {
         onRetry={refetch}
         searchable={false}
         rowKey={(r) => r.id}
+        selectable={isApprover}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        headerActions={
+          isApprover && selectedIds.size > 0 ? (
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<Trash2 className="h-4 w-4" />}
+              onClick={() => setDeleteConfirm(true)}
+            >
+              Delete ({selectedIds.size})
+            </Button>
+          ) : undefined
+        }
         emptyMessage={
           activeTab === 'My Pending'
             ? 'No pending work requests assigned to you'
             : 'No work requests found'
         }
       />
+
+      {/* Bulk Delete Confirmation */}
+      <Modal
+        open={deleteConfirm}
+        onClose={() => setDeleteConfirm(false)}
+        title="Delete Work Requests"
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+            <Button
+              variant="danger"
+              loading={deleting}
+              onClick={() => {
+                bulkDelete(Array.from(selectedIds), {
+                  onSuccess: () => { setSelectedIds(new Set()); setDeleteConfirm(false); },
+                });
+              }}
+            >
+              Delete {selectedIds.size} Request(s)
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          Are you sure you want to permanently delete {selectedIds.size} selected work request(s)? This action cannot be undone.
+        </p>
+      </Modal>
 
       {/* Create Modal */}
       <Modal
@@ -283,8 +329,8 @@ export default function WorkRequestsPage() {
               <option key={u.id} value={u.id}>{u.name}</option>
             ))}
           </Select>
-          <Select label="Project *" error={errors.projectId?.message} {...register('projectId')}>
-            <option value="">Select project…</option>
+          <Select label="Project" error={errors.projectId?.message} {...register('projectId')}>
+            <option value="NA">NA</option>
             {projects.map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
@@ -335,7 +381,7 @@ export default function WorkRequestsPage() {
             />
             <div>
               <p className="text-sm font-medium text-foreground mb-1">
-                Proof / Attachments
+                Attachments
               </p>
               <FileUpload
                 onChange={(ids) => setSubmitAttachmentIds(ids)}

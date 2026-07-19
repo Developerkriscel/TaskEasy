@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, X, CheckCheck, ExternalLink, Info, AlertCircle, CheckCircle2, Clock, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -73,6 +74,8 @@ interface NotificationDrawerProps {
 }
 
 export function NotificationDrawer({ open, onClose }: NotificationDrawerProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const drawerRef = useRef<HTMLDivElement>(null);
   const liveItems = useNotificationStore((s) => s.liveItems);
   const markLiveRead = useNotificationStore((s) => s.markLiveRead);
@@ -130,9 +133,11 @@ export function NotificationDrawer({ open, onClose }: NotificationDrawerProps) {
 
   const unreadCount = items.filter((n) => !n.isRead).length;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
-      {open && <div className="fixed inset-0 z-40" style={{ background: 'rgba(2,6,23,0.35)', backdropFilter: 'blur(2px)' }} onClick={onClose} />}
+      {open && <div className="fixed inset-0 z-40" style={{ background: 'rgba(2,6,23,0.5)', backdropFilter: 'blur(12px)' }} onClick={onClose} />}
       <div
         ref={drawerRef}
         className={cn('fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-border bg-surface shadow-[0_40px_100px_-56px_rgba(15,23,42,0.85)] transition-transform duration-300 ease-in-out', open ? 'translate-x-0' : 'translate-x-full')}
@@ -179,6 +184,7 @@ export function NotificationDrawer({ open, onClose }: NotificationDrawerProps) {
           </a>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }

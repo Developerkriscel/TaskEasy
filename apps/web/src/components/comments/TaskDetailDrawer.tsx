@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, MessageSquare, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CommentsPanel } from './CommentsPanel';
@@ -20,13 +21,17 @@ interface TaskDetailDrawerProps {
 
 export function TaskDetailDrawer({ open, onClose, task, refType, taskType }: TaskDetailDrawerProps) {
   const [tab, setTab] = useState<'timeline' | 'comments'>('timeline');
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const timelineEvents: TimelineEvent[] = task ? buildTaskTimeline(task, taskType) : [];
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       {open && (
-        <div className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-40 bg-[rgba(2,6,23,0.5)] backdrop-blur-md" onClick={onClose} />
       )}
       <div
         className={cn(
@@ -97,6 +102,7 @@ export function TaskDetailDrawer({ open, onClose, task, refType, taskType }: Tas
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }

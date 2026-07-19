@@ -28,9 +28,7 @@ export class RolesGuard implements CanActivate {
     if (isTenantWideRole(user.role)) return true;
 
     if (!normalizedRequiredRoles.includes(userRole)) {
-      throw new ForbiddenException(
-        `Role '${user.role}' is not authorized for this action. Required: ${requiredRoles.join(', ')}`,
-      );
+      throw new ForbiddenException('You do not have permission to perform this action.');
     }
 
     return true;

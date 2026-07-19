@@ -85,4 +85,11 @@ export class WorkRequestController {
   ) {
     return this.workRequestService.rework(id, dto, user.tenantId, user.sub);
   }
+
+  @Post('bulk-delete')
+  @Roles('ADMIN', 'MANAGER')
+  @RequirePermissions('task.create')
+  bulkDelete(@Body() body: { ids: string[] }, @CurrentUser() user: JwtPayload) {
+    return this.workRequestService.bulkDelete(body.ids ?? [], user.tenantId);
+  }
 }

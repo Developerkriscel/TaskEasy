@@ -29,7 +29,7 @@ export function useCreateAutomationRule() {
     mutationFn: (data: Partial<AutomationRule>) => apiPost<AutomationRule>('/automation/rules', data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: CACHE_KEY });
-      toast.success('Automation rule created');
+      toast.success('Rule is live!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -53,7 +53,7 @@ export function useDeleteAutomationRule() {
     mutationFn: (id: string) => apiDelete(`/automation/rules/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: CACHE_KEY });
-      toast.success('Rule deleted');
+      toast.success('Rule removed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

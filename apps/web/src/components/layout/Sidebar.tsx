@@ -2,22 +2,51 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard, ClipboardList, CheckSquare, Briefcase,
-  GitBranch, CheckCircle, BarChart3, FileText, Bell,
-  Settings, Users, CalendarDays,
-  Zap, Shield, FolderKanban, Kanban, X,
-  FileSpreadsheet, TrendingUp,
-} from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
 import { Logo, LogoIcon } from '@/components/layout/Logo';
 import { useNotificationCounts } from '@/hooks/useDashboard';
 
+// ─── Colorful icon wrappers ──────────────────────────────────────────────────
+
+function SidebarIcon({ children, color }: { children: React.ReactNode; color: string }) {
+  return (
+    <span className={cn('inline-flex items-center justify-center h-5 w-5 rounded-md text-[11px]', color)}>
+      {children}
+    </span>
+  );
+}
+
+const NavIcons = {
+  dashboard:   () => <SidebarIcon color="bg-blue-500/15 text-blue-600">📊</SidebarIcon>,
+  delegation:  () => <SidebarIcon color="bg-violet-500/15 text-violet-600">📋</SidebarIcon>,
+  kanban:      () => <SidebarIcon color="bg-cyan-500/15 text-cyan-600">📌</SidebarIcon>,
+  workRequest: () => <SidebarIcon color="bg-amber-500/15 text-amber-600">💼</SidebarIcon>,
+  checklist:   () => <SidebarIcon color="bg-green-500/15 text-green-600">✅</SidebarIcon>,
+  fms:         () => <SidebarIcon color="bg-pink-500/15 text-pink-600">🔀</SidebarIcon>,
+  approval:    () => <SidebarIcon color="bg-emerald-500/15 text-emerald-600">👍</SidebarIcon>,
+  mis:         () => <SidebarIcon color="bg-indigo-500/15 text-indigo-600">📈</SidebarIcon>,
+  predictive:  () => <SidebarIcon color="bg-purple-500/15 text-purple-600">🤖</SidebarIcon>,
+  reports:     () => <SidebarIcon color="bg-orange-500/15 text-orange-600">📄</SidebarIcon>,
+  notification:() => <SidebarIcon color="bg-red-500/15 text-red-600">🔔</SidebarIcon>,
+  calendar:    () => <SidebarIcon color="bg-teal-500/15 text-teal-600">📅</SidebarIcon>,
+  projects:    () => <SidebarIcon color="bg-sky-500/15 text-sky-600">📁</SidebarIcon>,
+  users:       () => <SidebarIcon color="bg-fuchsia-500/15 text-fuchsia-600">👥</SidebarIcon>,
+  automation:  () => <SidebarIcon color="bg-yellow-500/15 text-yellow-600">⚡</SidebarIcon>,
+  importExport:() => <SidebarIcon color="bg-lime-500/15 text-lime-600">📥</SidebarIcon>,
+  audit:       () => <SidebarIcon color="bg-slate-500/15 text-slate-600">🛡️</SidebarIcon>,
+  hierarchy:   () => <SidebarIcon color="bg-rose-500/15 text-rose-600">🏢</SidebarIcon>,
+  settings:    () => <SidebarIcon color="bg-gray-500/15 text-gray-600">⚙️</SidebarIcon>,
+  security:    () => <SidebarIcon color="bg-blue-500/15 text-blue-600">🔐</SidebarIcon>,
+};
+
+// ─── Nav data ────────────────────────────────────────────────────────────────
+
 interface NavItem {
   label: string;
   href: string;
-  icon: React.FC<{ className?: string }>;
+  icon: React.FC;
   roles?: string[];
   countKey?: keyof import('@/types').NotificationCounts;
 }
@@ -31,38 +60,46 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Main',
     items: [
-      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'Delegation', href: '/delegation', icon: ClipboardList, countKey: 'delegation' },
-      { label: 'Kanban', href: '/kanban', icon: Kanban },
-      { label: 'Work Requests', href: '/work-requests', icon: Briefcase, countKey: 'workRequest' },
-      { label: 'Checklists', href: '/checklist', icon: CheckSquare, countKey: 'checklist' },
-      { label: 'FMS System', href: '/fms', icon: GitBranch, countKey: 'fms' },
+      { label: 'Dashboard', href: '/dashboard', icon: NavIcons.dashboard },
+      { label: 'Delegation', href: '/delegation', icon: NavIcons.delegation, countKey: 'delegation' },
+      { label: 'Work Requests', href: '/work-requests', icon: NavIcons.workRequest, countKey: 'workRequest' },
+      { label: 'Checklists', href: '/checklist', icon: NavIcons.checklist, countKey: 'checklist' },
+      { label: 'FMS System', href: '/fms', icon: NavIcons.fms, countKey: 'fms' },
+      { label: 'Kanban', href: '/kanban', icon: NavIcons.kanban },
     ],
   },
   {
     label: 'Analytics',
     items: [
-      { label: 'Approve / Review', href: '/approvals', icon: CheckCircle, roles: ['ADMIN', 'MANAGER', 'TEAM_LEAD', 'EMPLOYEE', 'VIEWER'], countKey: 'approval' },
-      { label: 'MIS', href: '/mis', icon: BarChart3, roles: ['ADMIN', 'MANAGER'] },
-      { label: 'Predictive AI', href: '/predictive', icon: TrendingUp, roles: ['ADMIN', 'MANAGER'] },
-      { label: 'Reports', href: '/reports', icon: FileText, roles: ['ADMIN', 'MANAGER'] },
-      { label: 'Notifications', href: '/notifications', icon: Bell },
-      { label: 'Calendar', href: '/calendar', icon: CalendarDays },
+      { label: 'Approve / Review', href: '/approvals', icon: NavIcons.approval, roles: ['ADMIN', 'MANAGER', 'TEAM_LEAD', 'EMPLOYEE', 'VIEWER'], countKey: 'approval' },
+      { label: 'MIS', href: '/mis', icon: NavIcons.mis, roles: ['ADMIN', 'MANAGER'] },
+      { label: 'Predictive AI', href: '/predictive', icon: NavIcons.predictive, roles: ['ADMIN', 'MANAGER'] },
+      { label: 'Reports', href: '/reports', icon: NavIcons.reports, roles: ['ADMIN', 'MANAGER'] },
+      { label: 'Notifications', href: '/notifications', icon: NavIcons.notification },
+      { label: 'Calendar', href: '/calendar', icon: NavIcons.calendar },
     ],
   },
   {
     label: 'Administration',
     items: [
-      { label: 'Projects', href: '/projects', icon: FolderKanban, roles: ['ADMIN', 'MANAGER'] },
-      { label: 'Users', href: '/users', icon: Users, roles: ['ADMIN'] },
-      { label: 'Automation', href: '/automation', icon: Zap, roles: ['ADMIN'] },
-      { label: 'Import / Export', href: '/import-export', icon: FileSpreadsheet, roles: ['ADMIN'] },
-      { label: 'Audit Logs', href: '/audit-logs', icon: Shield, roles: ['ADMIN', 'AUDITOR'] },
-      { label: 'Set Hierarchy', href: '/hierarchy', icon: Users, roles: ['ADMIN'] },
-      { label: 'Settings', href: '/settings', icon: Settings, roles: ['ADMIN'] },
+      { label: 'Projects', href: '/projects', icon: NavIcons.projects, roles: ['ADMIN', 'MANAGER'] },
+      { label: 'Users', href: '/users', icon: NavIcons.users, roles: ['ADMIN'] },
+      { label: 'Automation', href: '/automation', icon: NavIcons.automation, roles: ['ADMIN'] },
+      { label: 'Import / Export', href: '/import-export', icon: NavIcons.importExport, roles: ['ADMIN'] },
+      { label: 'Audit Logs', href: '/audit-logs', icon: NavIcons.audit, roles: ['ADMIN', 'AUDITOR'] },
+      { label: 'Set Hierarchy', href: '/hierarchy', icon: NavIcons.hierarchy, roles: ['ADMIN'] },
+      { label: 'Settings', href: '/settings', icon: NavIcons.settings, roles: ['ADMIN'] },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { label: 'My Security', href: '/account/security', icon: NavIcons.security },
     ],
   },
 ];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const roleMatches = (userRole: string | undefined, allowedRoles?: string[]) => {
   if (!allowedRoles) return true;
@@ -77,6 +114,8 @@ const approvalLabelForRole = (userRole?: string) => {
     ? 'Approve / Review'
     : 'Track Status';
 };
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -164,10 +203,7 @@ export function Sidebar({ collapsed = false, mobileOpen = false, onMobileClose }
                       )}
                     >
                       <div className="relative flex-shrink-0">
-                        <Icon className={cn(
-                          'h-4 w-4',
-                          isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
-                        )} />
+                        <Icon />
                         {count > 0 && (
                           <span className={cn(
                             'absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-0.5 text-[9px] font-semibold',

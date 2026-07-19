@@ -420,12 +420,40 @@ export class AuthService {
 
   // ── Sessions ─────────────────────────────────────────────────
 
-  async getSessions(userId: string) {
-    return this.prisma.refreshToken.findMany({
+  async getSessions(userId: string, rawRefreshToken?: string) {
+    const currentTokenHash = rawRefreshToken ? await this.hashToken(rawRefreshToken) : null;
+    const sessions = await this.prisma.refreshToken.findMany({
       where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
-      select: { id: true, deviceInfo: true, ipAddress: true, createdAt: true, expiresAt: true },
+      select: { id: true, tokenHash: true, deviceInfo: true, ipAddress: true, createdAt: true, expiresAt: true },
       orderBy: { createdAt: 'desc' },
     });
+
+    if (sessions.length > 0) {
+      return sessions.map(({ tokenHash, ...session }) => ({
+        ...session,
+        isCurrent: currentTokenHash ? tokenHash === currentTokenHash : false,
+      }));
+    }
+
+    // If a browser is authenticated only with an access token or older data
+    // exists without refresh-token rows, still show the latest successful login
+    // instead of an empty, misleading session panel.
+    const latestLogin = await this.prisma.loginHistory.findFirst({
+      where: { userId, success: true },
+      select: { id: true, ipAddress: true, userAgent: true, createdAt: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return latestLogin
+      ? [{
+          id: `login-${latestLogin.id}`,
+          deviceInfo: latestLogin.userAgent,
+          ipAddress: latestLogin.ipAddress,
+          createdAt: latestLogin.createdAt,
+          expiresAt: null,
+          isCurrent: true,
+        }]
+      : [];
   }
 
   async revokeSession(userId: string, sessionId: string) {

@@ -60,39 +60,39 @@ function EmployeePerfCard({ emp, idx }: { emp: EmpPerf; idx: number }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{emp.name ?? '—'}</p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
-            GRADE: <span className="font-medium text-muted-foreground">{emp.grade ?? '—'}</span>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            GRADE: <span className="font-medium text-foreground">{emp.grade ?? '—'}</span>
           </p>
-          <p className="text-[11px] text-slate-400">
-            SCORE: <span className="font-medium text-muted-foreground">{emp.score ?? '—'}</span>
+          <p className="text-[11px] text-muted-foreground">
+            SCORE: <span className="font-medium text-foreground">{emp.score ?? '—'}</span>
           </p>
         </div>
       </div>
 
       {/* Performance placeholder */}
       <div className="rounded-lg bg-surface-muted/50 px-3 py-2 mb-3 text-center">
-        <p className="text-xs font-medium text-slate-400">Performance</p>
-        <p className="text-xs text-muted-foreground mt-0.5">No Data</p>
+        <p className="text-xs font-medium text-muted-foreground">Performance</p>
+        <p className="text-xs text-muted-foreground mt-0.5 opacity-70">No Data</p>
       </div>
 
       {/* Metrics grid */}
       <div className="grid grid-cols-2 gap-2 text-center">
         <div className="rounded-lg bg-surface-muted/50 px-2 py-2">
-          <p className="text-lg font-bold text-slate-700 dark:text-slate-200">{emp.completed ?? 0}</p>
-          <p className="text-[11px] text-slate-400">Completed</p>
+          <p className="text-lg font-bold text-foreground">{emp.completed ?? 0}</p>
+          <p className="text-[11px] text-muted-foreground">Completed</p>
         </div>
-        <div className="rounded-lg bg-orange-50 dark:bg-orange-900/20 px-2 py-2">
-          <p className="text-lg font-bold text-orange-500">{emp.pending ?? 0}</p>
-          <p className="text-[11px] text-orange-400">Pending</p>
+        <div className="rounded-lg bg-[rgba(var(--warning),0.08)] px-2 py-2">
+          <p className="text-lg font-bold text-warning">{emp.pending ?? 0}</p>
+          <p className="text-[11px] text-warning opacity-80">Pending</p>
         </div>
         <div className="rounded-lg bg-surface-muted/50 px-2 py-2">
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{emp.onTimePercent ?? 0}%</p>
-          <p className="text-[11px] text-slate-400">On Time</p>
+          <p className="text-sm font-bold text-foreground">{emp.onTimePercent ?? 0}%</p>
+          <p className="text-[11px] text-muted-foreground">On Time</p>
         </div>
-        <div className="rounded-lg bg-red-50 dark:bg-red-900/20 px-2 py-2">
-          <p className="text-sm font-bold text-red-500">{emp.reworkCount ?? 0}</p>
-          <p className="text-[11px] text-red-400">Issues</p>
-          <p className="text-[9px] text-red-300">Reworks</p>
+        <div className="rounded-lg bg-[rgba(var(--error),0.08)] px-2 py-2">
+          <p className="text-sm font-bold text-danger">{emp.reworkCount ?? 0}</p>
+          <p className="text-[11px] text-danger opacity-80">Issues</p>
+          <p className="text-[9px] text-danger opacity-60">Reworks</p>
         </div>
       </div>
     </div>
@@ -113,22 +113,22 @@ function PerformanceTab({ filters }: { filters: FilterValues }) {
     { key: 'name',          header: 'Employee',    sortable: true },
     { key: 'totalTasks',    header: 'Total Tasks' },
     { key: 'completed',     header: 'Completed',
-      render: (v) => <span className="text-green-600 font-medium">{v ?? 0}</span> },
+      render: (v) => <span className="text-success font-medium">{v ?? 0}</span> },
     { key: 'pending',       header: 'Pending',
-      render: (v) => <span className="text-amber-500 font-medium">{v ?? 0}</span> },
+      render: (v) => <span className="text-warning font-medium">{v ?? 0}</span> },
     { key: 'onTimePercent', header: 'On Time %',
       render: (v) => `${v ?? 0}%` },
     { key: 'avgDelay',      header: 'Avg Delay',
       render: (v) => `${v ?? 0} days` },
     { key: 'reworkCount',   header: 'Reworks',
-      render: (v) => v > 0 ? <span className="text-red-500 font-medium">{v}</span> : '0' },
+      render: (v) => v > 0 ? <span className="text-danger font-medium">{v}</span> : '0' },
     { key: 'score',         header: 'Score',       sortable: true,
       render: (v) => (
         <span className={cn(
           'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold',
-          (v ?? 0) >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-          : (v ?? 0) >= 60 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
-          : 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300',
+          (v ?? 0) >= 80 ? 'bg-[rgba(var(--success),0.12)] text-success'
+          : (v ?? 0) >= 60 ? 'bg-[rgba(var(--warning),0.12)] text-warning'
+          : 'bg-[rgba(var(--error),0.12)] text-danger',
         )}>
           {v ?? 0}/100
         </span>
@@ -141,7 +141,7 @@ function PerformanceTab({ filters }: { filters: FilterValues }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-52 rounded-xl border border-slate-200 bg-white animate-pulse" />
+              <div key={i} className="h-52 rounded-xl border border-border bg-surface animate-pulse" />
             ))
           : rows.map((emp, idx) => (
               <EmployeePerfCard key={emp.name ?? idx} emp={emp} idx={idx} />
@@ -190,8 +190,8 @@ function DelegationTab({ filters }: { filters: FilterValues }) {
     { key: 'targetDate',  header: 'Due',       sortable: true, render: (v) => formatDate(v) },
     { key: 'priority',    header: 'Priority',  render: (v) => <PriorityBadge priority={v} /> },
     { key: 'status',      header: 'Status',    render: (v) => <StatusBadge status={v} /> },
-    { key: 'delayDays',   header: 'Delay',     render: (v) => v > 0 ? <span className="text-red-500 font-medium">{v}d</span> : '—' },
-    { key: 'reworkCount', header: 'Reworks',   render: (v) => v > 0 ? <span className="text-orange-500">{v}</span> : '0' },
+    { key: 'delayDays',   header: 'Delay',     render: (v) => v > 0 ? <span className="text-danger font-medium">{v}d</span> : '—' },
+    { key: 'reworkCount', header: 'Reworks',   render: (v) => v > 0 ? <span className="text-warning">{v}</span> : '0' },
   ];
 
   return (
@@ -228,8 +228,8 @@ function WorkRequestTab({ filters }: { filters: FilterValues }) {
     { key: 'project',     header: 'Project',       render: (v) => v?.name ?? '—' },
     { key: 'deadlineDate',header: 'Deadline',      render: (v) => formatDate(v) },
     { key: 'status',      header: 'Status',        render: (v) => <StatusBadge status={v} /> },
-    { key: 'delayDays',   header: 'Delay',         render: (v) => v > 0 ? <span className="text-red-500 font-medium">{v}d</span> : '—' },
-    { key: 'reworkCount', header: 'Reworks',       render: (v) => v > 0 ? <span className="text-orange-500">{v}</span> : '0' },
+    { key: 'delayDays',   header: 'Delay',         render: (v) => v > 0 ? <span className="text-danger font-medium">{v}d</span> : '—' },
+    { key: 'reworkCount', header: 'Reworks',       render: (v) => v > 0 ? <span className="text-warning">{v}</span> : '0' },
   ];
 
   return (
@@ -299,19 +299,19 @@ function ProjectTab({ filters }: { filters: FilterValues }) {
     { key: 'name',           header: 'Project',      sortable: true },
     { key: 'totalTasks',     header: 'Total' },
     { key: 'completed',      header: 'Done',
-      render: (v) => <span className="text-green-600 font-medium">{v ?? 0}</span> },
+      render: (v) => <span className="text-success font-medium">{v ?? 0}</span> },
     { key: 'pending',        header: 'Pending',
-      render: (v) => <span className="text-amber-500 font-medium">{v ?? 0}</span> },
+      render: (v) => <span className="text-warning font-medium">{v ?? 0}</span> },
     { key: 'delayed',        header: 'Delayed',
-      render: (v) => v > 0 ? <span className="text-red-500 font-medium">{v}</span> : '0' },
+      render: (v) => v > 0 ? <span className="text-danger font-medium">{v}</span> : '0' },
     { key: 'completionRate', header: 'Completion %',
       render: (v) => `${v ?? 0}%` },
     { key: 'healthScore',    header: 'Health',
       render: (v) => (
         <span className={cn('font-semibold',
-          (v ?? 0) >= 70 ? 'text-green-600'
-          : (v ?? 0) >= 40 ? 'text-yellow-600'
-          : 'text-red-500',
+          (v ?? 0) >= 70 ? 'text-success'
+          : (v ?? 0) >= 40 ? 'text-warning'
+          : 'text-danger',
         )}>
           {v ?? 0}%
         </span>
@@ -362,8 +362,8 @@ export default function ReportsPage() {
               className={cn(
                 'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-shrink-0',
                 tab === key
-                  ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                  : 'border-transparent text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300',
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border',
               )}
             >
               {label}

@@ -27,7 +27,7 @@ export function useUploadMultiple(options?: { onSuccess?: (results: UploadResult
 export function useDeleteUpload() {
   return useMutation({
     mutationFn: (publicId: string) => uploadsApi.delete(publicId),
-    onSuccess: () => toast.success('File removed'),
+    onSuccess: () => toast.success('File removed!'),
     onError: (err) => toast.error(getApiError(err)),
   });
 }

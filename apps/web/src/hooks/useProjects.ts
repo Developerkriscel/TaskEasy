@@ -29,7 +29,7 @@ export function useCreateProject() {
     mutationFn: projectsApi.create,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Project created');
+      toast.success('Project created!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -41,7 +41,7 @@ export function useToggleProjectStatus() {
     mutationFn: projectsApi.toggleStatus,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Project status updated');
+      toast.success('Status updated!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -53,7 +53,7 @@ export function useDeleteProject() {
     mutationFn: projectsApi.remove,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Project deleted');
+      toast.success('Project removed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

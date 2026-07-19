@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronDown, ClipboardList, FileSpreadsheet, FileText, Plus, Search, X } from 'lucide-react';
+import { ChevronDown, ClipboardList, FileSpreadsheet, FileText, Plus, Search, Trash2, X } from 'lucide-react';
 import {
   useDelegation,
   useMyPendingDelegation,
   useSubmitDelegation,
   useCreateDelegationBulk,
+  useBulkDeleteDelegation,
 } from '@/hooks/useDelegation';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { useAuthStore } from '@/store/auth.store';
@@ -53,7 +54,7 @@ const createTask = () => ({
 
 const createFormDefaults = (): DelegationBulkFormValues => ({
   delegatedToIds: [],
-  projectId: '',
+  projectId: 'NA',
   tasks: [createTask()],
 });
 
@@ -243,6 +244,8 @@ export default function DelegationPage() {
   const [allFilters, setAllFilters] = useState<FilterValues>({ period: 'ALL' });
   const [pendingFilters, setPendingFilters] = useState<FilterValues>({ period: 'ALL' });
   const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const { user } = useAuthStore();
   const isAdmin = ['ADMIN', 'MANAGER', 'COMPANY_OWNER', 'SAAS_OWNER'].includes(user?.role ?? '');
@@ -272,6 +275,7 @@ export default function DelegationPage() {
   const { data: users = [] } = useActiveUsers();
   const { mutate: submitTask, isPending: submitting } = useSubmitDelegation();
   const { mutate: createBulk, isPending: creating } = useCreateDelegationBulk();
+  const { mutate: bulkDelete, isPending: deleting } = useBulkDeleteDelegation();
 
   const sortedProjects = useMemo(() => [...projects].sort((a, b) => a.name.localeCompare(b.name)), [projects]);
   const sortedUsers = useMemo(() => [...users].sort((a, b) => a.name.localeCompare(b.name)), [users]);
@@ -476,8 +480,50 @@ export default function DelegationPage() {
         rowKey={(r) => r.id}
         emptyMessage="No delegation tasks found"
         emptyAction={undefined}
-        headerActions={undefined}
+        selectable={isAdmin}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        headerActions={
+          isAdmin && selectedIds.size > 0 ? (
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<Trash2 className="h-4 w-4" />}
+              onClick={() => setDeleteConfirm(true)}
+            >
+              Delete ({selectedIds.size})
+            </Button>
+          ) : undefined
+        }
       />
+
+      {/* Bulk Delete Confirmation */}
+      <Modal
+        open={deleteConfirm}
+        onClose={() => setDeleteConfirm(false)}
+        title="Delete Tasks"
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+            <Button
+              variant="danger"
+              loading={deleting}
+              onClick={() => {
+                bulkDelete(Array.from(selectedIds), {
+                  onSuccess: () => { setSelectedIds(new Set()); setDeleteConfirm(false); },
+                });
+              }}
+            >
+              Delete {selectedIds.size} Task(s)
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          Are you sure you want to permanently delete {selectedIds.size} selected task(s)? This action cannot be undone.
+        </p>
+      </Modal>
 
       {/* ── Assign Tasks Modal ── */}
       <Modal
@@ -504,7 +550,7 @@ export default function DelegationPage() {
               />
             </div>
             <Select label="Project" error={errors.projectId?.message} {...register('projectId')}>
-              <option value="">Select project…</option>
+              <option value="NA">NA</option>
               {sortedProjects.map((p) => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
@@ -607,7 +653,7 @@ export default function DelegationPage() {
             </div>
 
             <Select label="Project" error={bulkErr.projectId?.message} {...regBulk('projectId')}>
-              <option value="">Select project…</option>
+              <option value="NA">NA</option>
               {sortedProjects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </Select>
           </div>
@@ -634,7 +680,7 @@ export default function DelegationPage() {
                       <td className="px-3 py-2 text-xs font-medium text-muted-foreground">{i + 1}</td>
                       <td className="px-2 py-1.5 min-w-[160px]">
                         <input
-                          className={`w-full rounded-xl border px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface ${
+                          className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10 ${
                             rowErr?.title ? 'border-brand' : 'border-border'
                           }`}
                           placeholder="Task title…"
@@ -644,7 +690,7 @@ export default function DelegationPage() {
                       </td>
                       <td className="px-2 py-1.5 min-w-[160px]">
                         <input
-                          className="w-full rounded-xl border border-border px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface"
+                          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                           placeholder="Optional…"
                           {...regBulk(`tasks.${i}.description` as any)}
                         />
@@ -652,7 +698,7 @@ export default function DelegationPage() {
                       <td className="px-2 py-1.5">
                         <input
                           type="date"
-                          className={`w-full rounded-xl border px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface ${
+                          className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10 ${
                             rowErr?.targetDate ? 'border-brand' : 'border-border'
                           }`}
                           {...regBulk(`tasks.${i}.targetDate` as any)}
@@ -662,13 +708,13 @@ export default function DelegationPage() {
                       <td className="px-2 py-1.5">
                         <input
                           type="time"
-                          className="w-full rounded-xl border border-border px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface"
+                          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                           {...regBulk(`tasks.${i}.targetTime` as any)}
                         />
                       </td>
                       <td className="px-2 py-1.5">
                         <select
-                          className="w-full rounded-xl border border-border px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface"
+                          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                           {...regBulk(`tasks.${i}.priority` as any)}
                         >
                           {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
@@ -728,7 +774,7 @@ export default function DelegationPage() {
             placeholder="Describe what was done…"
             {...regSubmit('doerRemarks')}
           />
-          <FileUpload label="Proof / Attachments" maxFiles={3} onChange={setAttachmentIds} />
+          <FileUpload label="Attachments" maxFiles={5} onChange={setAttachmentIds} />
         </form>
       </Modal>
     </div>

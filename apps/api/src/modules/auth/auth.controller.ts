@@ -32,6 +32,12 @@ import { Public } from '../../common/decorators/public.decorator';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+function getClientIp(req: Request): string | undefined {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const firstForwarded = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
+  return firstForwarded?.split(',')[0]?.trim() || req.ip;
+}
+
 function refreshCookieOptions() {
   return {
     httpOnly: true,
@@ -61,7 +67,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) || req.ip;
+    const ipAddress = getClientIp(req);
     const userAgent = req.headers['user-agent'] || '';
     const result = await this.authService.login(dto, ipAddress, userAgent);
 
@@ -191,8 +197,8 @@ export class AuthController {
   @Get('sessions')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'List active sessions' })
-  getSessions(@CurrentUser() user: JwtPayload) {
-    return this.authService.getSessions(user.sub);
+  getSessions(@CurrentUser() user: JwtPayload, @Req() req: Request) {
+    return this.authService.getSessions(user.sub, req.cookies?.refreshToken);
   }
 
   @Delete('sessions/:sessionId')

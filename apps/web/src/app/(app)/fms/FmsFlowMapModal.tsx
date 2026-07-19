@@ -348,7 +348,7 @@ export function FmsFlowMapModal({
           <select
             value={selectedWorkflowId}
             onChange={(e) => { setSelectedWorkflowId(e.target.value); setActiveTab('flow'); }}
-            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-sm outline-none focus:border-indigo-500"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
           >
             <option value="">Choose a workflow…</option>
             {workflows.map((w: any) => (

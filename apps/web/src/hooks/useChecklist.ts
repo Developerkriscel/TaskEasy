@@ -23,7 +23,7 @@ export function useCreateChecklistMaster() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['checklist'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Checklist assigned');
+      toast.success('Checklist assigned!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -59,7 +59,7 @@ export function useCompleteChecklist() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['checklist'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Checklist submitted for approval');
+      toast.success('Sent for approval!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -72,7 +72,20 @@ export function useBulkCompleteChecklist() {
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ['checklist'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success(`${result.completed} tasks submitted for approval`);
+      toast.success(`${result.completed} tasks sent for approval!`);
+    },
+    onError: (err) => toast.error(getApiError(err)),
+  });
+}
+
+export function useBulkDeleteChecklist() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) => checklistApi.bulkDelete(ids),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['checklist'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      toast.success('All cleared!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

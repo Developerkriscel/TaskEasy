@@ -51,11 +51,14 @@ export class WorkRequestService {
       throw new ForbiddenException('Doer user is outside your team visibility');
     }
 
-    // Validate project
-    const project = await this.prisma.project.findFirst({
-      where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
-    });
-    if (!project) throw new BadRequestException('Project not found or inactive');
+    // Validate project (skip if NA or not provided)
+    const hasProject = dto.projectId && dto.projectId !== 'NA';
+    if (hasProject) {
+      const project = await this.prisma.project.findFirst({
+        where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
+      });
+      if (!project) throw new BadRequestException('Project not found or inactive');
+    }
 
     // BUG-01 fix: use atomic sequence instead of count+1
     const seq = await atomicNextWorkRequestId(this.prisma, tenantId);
@@ -95,7 +98,7 @@ export class WorkRequestService {
         requestId,
         requestedById,
         requestedForId: dto.requestForId,
-        projectId: dto.projectId,
+        projectId: hasProject ? dto.projectId : undefined,
         title: dto.title,
         description: dto.description,
         deadlineDate: deadline,
@@ -357,6 +360,15 @@ export class WorkRequestService {
     await this.redis.delByPattern(CachePatterns.dashboard(tenantId));
     await this.redis.delByPattern(CachePatterns.mis(tenantId));
     return updated;
+  }
+
+  async bulkDelete(ids: string[], tenantId: string) {
+    const result = await this.prisma.workRequest.deleteMany({
+      where: { id: { in: ids }, tenantId },
+    });
+    await this.redis.delByPattern(CachePatterns.dashboard(tenantId));
+    await this.redis.delByPattern(CachePatterns.mis(tenantId));
+    return { deleted: result.count };
   }
 
   async getPendingApprovalCount(tenantId: string, userId: string): Promise<number> {

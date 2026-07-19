@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '@/store/auth.store';
 import { useNotificationStore, WsNotification } from '@/store/notification.store';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
 import { getWsBaseUrl } from '@/lib/runtime-config';
 
 const WS_URL = getWsBaseUrl();
@@ -26,6 +27,7 @@ export function useSocket() {
   const accessToken = useAuthStore((s) => s.accessToken);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const addLiveNotification = useNotificationStore((s) => s.addLiveNotification);
+  const playNotificationSound = useNotificationSound();
   // FE-05 fix: use state (not ref) so components re-render when connection status changes
   const [isConnected, setIsConnected] = useState(false);
 
@@ -86,6 +88,7 @@ export function useSocket() {
         isRead: false,
         createdAt: payload.createdAt ?? new Date().toISOString(),
       });
+      playNotificationSound();
     });
 
     // task:updated is emitted but UI can subscribe separately via useTaskSocket
@@ -99,7 +102,7 @@ export function useSocket() {
       // Keep the socket alive across route changes; only disconnect on logout
       // (handled above when isAuthenticated becomes false)
     };
-  }, [isAuthenticated, accessToken, addLiveNotification]);
+  }, [isAuthenticated, accessToken, addLiveNotification, playNotificationSound]);
 
   return {
     isConnected,

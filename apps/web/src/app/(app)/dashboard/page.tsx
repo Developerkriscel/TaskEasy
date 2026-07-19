@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ClipboardList, Briefcase, CheckSquare, GitBranch,
   Check, Clock, AlertTriangle, X,
@@ -557,6 +558,8 @@ function DrilldownModal({
   view: 'team' | 'my';
   onClose: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ['dashboard-drilldown', drilldown?.module, drilldown?.status, view],
     queryFn: () => dashboardApi.drilldown(drilldown!.module, drilldown!.status, view),
@@ -564,11 +567,11 @@ function DrilldownModal({
     staleTime: 60_000,
   });
 
-  if (!drilldown) return null;
+  if (!drilldown || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="absolute inset-0 bg-[rgba(2,6,23,0.5)] backdrop-blur-md" onClick={onClose} />
       <div className="relative z-10 flex flex-col w-full max-w-4xl max-h-[85vh] rounded-2xl bg-surface shadow-[0_32px_80px_-20px_rgba(15,23,42,0.35)] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface-muted/70">
@@ -644,7 +647,8 @@ function DrilldownModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

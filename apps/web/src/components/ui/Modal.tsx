@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -30,6 +31,9 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
   const backdropRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Close on Escape
   useEffect(() => {
@@ -50,7 +54,9 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
     if (open) contentRef.current?.focus();
   }, [open]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <div
@@ -61,7 +67,7 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
         >
           <motion.div
             ref={backdropRef}
-            className="absolute inset-0 bg-[rgba(2,6,23,0.55)] backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[rgba(2,6,23,0.5)] backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -69,7 +75,6 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
             onClick={onClose}
           />
 
-          {/* Level 3 elevation: ambient shadow, 16px radius for large containers */}
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -107,7 +112,8 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
 

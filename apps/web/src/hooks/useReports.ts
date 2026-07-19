@@ -41,7 +41,7 @@ export function useSaveReportTemplate() {
       apiPost<any>('/reports/templates', data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['report-templates'] });
-      toast.success('Report template saved');
+      toast.success('Template saved!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -53,7 +53,7 @@ export function useDeleteReportTemplate() {
     mutationFn: (id: string) => apiDelete(`/reports/templates/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['report-templates'] });
-      toast.success('Template deleted');
+      toast.success('Template removed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

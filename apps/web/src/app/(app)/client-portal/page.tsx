@@ -23,7 +23,7 @@ import { formatDate } from '@/lib/utils';
 // ─── Schema ────────────────────────────────────────────────────────────────────
 
 const requestSchema = z.object({
-  projectId: z.string().min(1, 'Project is required'),
+  projectId: z.string().default('NA'),
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(5, 'Description is required'),
   deadlineDate: z.string().min(1, 'Deadline is required'),
@@ -124,7 +124,7 @@ export default function ClientPortalPage() {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<RequestFormValues>({
     resolver: zodResolver(requestSchema),
-    defaultValues: { projectId: '', title: '', description: '', deadlineDate: '', deadlineTime: '18:00' },
+    defaultValues: { projectId: 'NA', title: '', description: '', deadlineDate: '', deadlineTime: '18:00' },
   });
 
   const { mutate: create, isPending: creating } = useMutation({
@@ -237,7 +237,7 @@ export default function ClientPortalPage() {
         }>
         <form id="client-create-form" onSubmit={handleSubmit((v) => create(v))} className="grid gap-4">
           <Select label="Project" {...register('projectId')} error={errors.projectId?.message}>
-            <option value="">Select project…</option>
+            <option value="NA">NA</option>
             {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </Select>
           <Input label="Request Title" {...register('title')} placeholder="e.g. Prepare quotation for ABC client" error={errors.title?.message} />

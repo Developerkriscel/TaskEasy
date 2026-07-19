@@ -25,7 +25,7 @@ export function useCreateDelegation() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['delegation'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Task(s) delegated successfully');
+      toast.success('Tasks assigned!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -38,7 +38,7 @@ export function useCreateDelegationBulk() {
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['delegation'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success(`${data.length} task(s) delegated successfully`);
+      toast.success(`${data.length} tasks assigned!`);
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -52,7 +52,7 @@ export function useSubmitDelegation() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['delegation'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Submitted for approval');
+      toast.success('Sent for approval!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -67,7 +67,7 @@ export function useApproveDelegation() {
       qc.invalidateQueries({ queryKey: ['delegation'] });
       qc.invalidateQueries({ queryKey: ['approvals'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Task approved');
+      toast.success('Approved!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -82,7 +82,20 @@ export function useReworkDelegation() {
       qc.invalidateQueries({ queryKey: ['delegation'] });
       qc.invalidateQueries({ queryKey: ['approvals'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Sent for rework');
+      toast.success('Sent back for rework');
+    },
+    onError: (err) => toast.error(getApiError(err)),
+  });
+}
+
+export function useBulkDeleteDelegation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) => delegationApi.bulkDelete(ids),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['delegation'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      toast.success('All cleared!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

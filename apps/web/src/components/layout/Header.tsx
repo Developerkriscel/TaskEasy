@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Menu, Bell, ChevronDown, User, Key, LogOut,
+  Menu, Bell, ChevronDown, ChevronRight, User, LogOut,
   Plus, Search, Briefcase, FolderKanban, Users, ListTodo, Sun, Moon, RefreshCw,
+  ClipboardList, FileText, CheckSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
@@ -39,10 +40,14 @@ const ROUTE_LABELS: Record<string, string> = {
   kanban: 'Kanban',
 };
 
+const ADD_TASK_ITEMS = [
+  { label: 'Delegation', href: '/delegation', icon: ClipboardList },
+  { label: 'Work Request', href: '/work-requests', icon: FileText },
+  { label: 'Checklist', href: '/checklist', icon: CheckSquare },
+];
+
 const QUICK_ACTIONS = [
-  { label: 'Add Task', href: '/delegation', icon: ListTodo },
   { label: 'Create Project', href: '/projects', icon: FolderKanban },
-  { label: 'Add Employee', href: '/users', icon: Users },
   { label: 'Open Reports', href: '/reports', icon: Briefcase },
 ];
 
@@ -59,6 +64,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [searchValue, setSearchValue] = useState('');
@@ -94,6 +100,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
       }
       if (quickRef.current && !quickRef.current.contains(target)) {
         setQuickOpen(false);
+        setAddTaskOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -113,7 +120,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-14 flex-shrink-0 items-center gap-3 border-b border-border bg-surface/95 px-4 backdrop-blur-sm">
+      <header className="flex h-14 flex-shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
         <div className="flex flex-1 items-center gap-3 min-w-0">
           <button onClick={onToggleSidebar} className={iconBtn} aria-label="Toggle sidebar">
             <Menu className="h-5 w-5" />
@@ -192,6 +199,46 @@ export function Header({ onToggleSidebar }: HeaderProps) {
                     <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Quick actions</p>
                   </div>
                   <div className="p-1.5">
+                    {/* Add Task with sub-menu */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setAddTaskOpen((o) => !o)}
+                        className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface-muted"
+                      >
+                        <ListTodo className="h-4 w-4 text-muted-foreground" />
+                        <span className="flex-1 text-left">Add Task</span>
+                        <ChevronRight className={cn('h-3.5 w-3.5 text-muted-foreground transition-transform', addTaskOpen && 'rotate-90')} />
+                      </button>
+                      <AnimatePresence>
+                        {addTaskOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="ml-6 border-l border-border pl-2 py-0.5">
+                              {ADD_TASK_ITEMS.map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => { setQuickOpen(false); setAddTaskOpen(false); }}
+                                    className="flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-surface-muted"
+                                  >
+                                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                                    {item.label}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                     {QUICK_ACTIONS.map((item) => {
                       const Icon = item.icon;
                       return (
@@ -288,12 +335,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
                       className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface-muted"
                     >
                       <User className="h-4 w-4 text-muted-foreground" /> Profile
-                    </button>
-                    <button
-                      onClick={() => { setProfileOpen(false); router.push('/settings/security'); }}
-                      className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface-muted"
-                    >
-                      <Key className="h-4 w-4 text-muted-foreground" /> Change Password
                     </button>
                     <div className="mt-1 border-t border-border pt-1">
                       <button

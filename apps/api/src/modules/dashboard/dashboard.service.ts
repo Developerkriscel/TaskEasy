@@ -130,17 +130,17 @@ export class DashboardService {
       approvalCount,
       criticalTasks,
     ] = await Promise.all([
-      // Delegation
+      // Delegation — SEND_FOR_APPROVAL counts as done (employee has submitted)
       this.prisma.delegationTask.count({ where: delBase }),
-      this.prisma.delegationTask.count({ where: { ...delBase, status: 'COMPLETED' } }),
+      this.prisma.delegationTask.count({ where: { ...delBase, status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] } } }),
       this.prisma.delegationTask.count({ where: { ...delBase, status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK'] }, targetDate: { lt: now } } }),
-      // Work Requests
+      // Work Requests — SEND_FOR_APPROVAL counts as done
       this.prisma.workRequest.count({ where: wrBase }),
-      this.prisma.workRequest.count({ where: { ...wrBase, status: 'COMPLETED' } }),
+      this.prisma.workRequest.count({ where: { ...wrBase, status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] } } }),
       this.prisma.workRequest.count({ where: { ...wrBase, status: { in: ['PENDING', 'REWORK'] }, deadlineDate: { lt: now } } }),
-      // Checklist
+      // Checklist — SEND_FOR_APPROVAL counts as done
       this.prisma.checklistTask.count({ where: clBase }),
-      this.prisma.checklistTask.count({ where: { ...clBase, status: 'COMPLETED' } }),
+      this.prisma.checklistTask.count({ where: { ...clBase, status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] } } }),
       this.prisma.checklistTask.count({ where: { ...clBase, OR: [{ status: 'LATE' }, { onTimeStatus: 'LATE' }] } }),
       // FMS
       this.prisma.fmsTask.count({ where: fmsBase }),
@@ -483,8 +483,8 @@ export class DashboardService {
 
     if (module === 'delegation') {
       const statusWhere =
-        status === 'done'    ? { status: 'COMPLETED' as const } :
-        status === 'pending' ? { status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK', 'SEND_FOR_APPROVAL'] as any } } :
+        status === 'done'    ? { status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] as any } } :
+        status === 'pending' ? { status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK'] as any } } :
         status === 'delayed' ? { status: { in: ['PENDING', 'IN_PROGRESS', 'REWORK'] as any }, targetDate: { lt: now } } :
         {};
       const rows = await this.prisma.delegationTask.findMany({
@@ -508,8 +508,8 @@ export class DashboardService {
 
     if (module === 'workRequest') {
       const statusWhere =
-        status === 'done'    ? { status: 'COMPLETED' as const } :
-        status === 'pending' ? { status: { in: ['PENDING', 'REWORK', 'SEND_FOR_APPROVAL'] as any } } :
+        status === 'done'    ? { status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] as any } } :
+        status === 'pending' ? { status: { in: ['PENDING', 'REWORK'] as any } } :
         status === 'delayed' ? { status: { in: ['PENDING', 'REWORK'] as any }, deadlineDate: { lt: now } } :
         {};
       const rows = await this.prisma.workRequest.findMany({
@@ -535,9 +535,9 @@ export class DashboardService {
       const baseWhere = { tenantId, ...(idFilter ? { assignedToId: idFilter } : {}) };
       const rows = await this.prisma.checklistTask.findMany({
         where: status === 'done'
-          ? { ...baseWhere, status: 'COMPLETED' }
+          ? { ...baseWhere, status: { in: ['COMPLETED', 'SEND_FOR_APPROVAL'] as any } }
           : status === 'pending'
-          ? { ...baseWhere, status: { in: ['PENDING', 'REWORK', 'SEND_FOR_APPROVAL'] as any } }
+          ? { ...baseWhere, status: { in: ['PENDING', 'REWORK'] as any } }
           : status === 'delayed'
           ? { ...baseWhere, OR: [{ status: 'LATE' }, { onTimeStatus: 'LATE' }] }
           : baseWhere,

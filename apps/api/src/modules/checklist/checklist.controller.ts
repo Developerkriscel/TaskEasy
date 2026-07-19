@@ -108,4 +108,11 @@ export class ChecklistController {
   bulkComplete(@Body() dto: BulkCompleteChecklistDto, @CurrentUser() user: JwtPayload) {
     return this.checklistService.bulkComplete(dto, user.tenantId, user.sub);
   }
+
+  @Post('tasks/bulk-delete')
+  @Roles('ADMIN', 'MANAGER')
+  @RequirePermissions('task.create')
+  bulkDelete(@Body() body: { ids: string[] }, @CurrentUser() user: JwtPayload) {
+    return this.checklistService.bulkDelete(body.ids ?? [], user.tenantId);
+  }
 }

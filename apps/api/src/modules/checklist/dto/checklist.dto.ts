@@ -24,9 +24,10 @@ export class CreateChecklistMasterDto {
   @ArrayMaxSize(50)  // MI-02 fix: prevent bulk DoS via huge array
   assignedToIds: string[];
 
-  @ApiProperty()
+  @ApiPropertyOptional({ default: 'NA' })
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string = 'NA';
 
   @ApiProperty()
   @IsString()

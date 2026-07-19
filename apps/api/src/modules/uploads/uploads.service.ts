@@ -91,8 +91,8 @@ export class UploadsService {
     uploadedById: string,
     folder = 'taskeasy',
   ): Promise<UploadResult[]> {
-    if (files.length > 10) {
-      throw new BadRequestException('Maximum 10 files allowed per upload');
+    if (files.length > 5) {
+      throw new BadRequestException('Maximum 5 files allowed per upload');
     }
     return Promise.all(
       files.map((f) => this.uploadFile(f.buffer, f.originalname, f.mimetype, tenantId, uploadedById, folder)),
@@ -136,31 +136,25 @@ export class UploadsService {
     if (buffer.length < 4) return false;
     const magic = buffer.slice(0, 8);
     const isPDF = magic.slice(0, 4).toString('ascii') === '%PDF';
-    const isPNG = magic[0] === 0x89 && magic[1] === 0x50 && magic[2] === 0x4e && magic[3] === 0x47;
     const isJPEG = magic[0] === 0xff && magic[1] === 0xd8 && magic[2] === 0xff;
-    const isGIF = magic.slice(0, 3).toString('ascii') === 'GIF';
-    const isWEBP = buffer.length >= 12 && buffer.slice(8, 12).toString('ascii') === 'WEBP';
     const isMP4 = buffer.length >= 8 && (buffer.slice(4, 8).toString('ascii') === 'ftyp' || buffer.slice(4, 8).toString('ascii') === 'moov');
-    return isPDF || isPNG || isJPEG || isGIF || isWEBP || isMP4;
+    return isPDF || isJPEG || isMP4;
   }
 
   private validateFile(buffer: Buffer, mimeType: string): void {
     const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
     const ALLOWED_TYPES = [
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'image/jpeg',
       'application/pdf',
-      'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'application/vnd.ms-excel',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'text/plain', 'text/csv',
-      'video/mp4', 'video/quicktime',
+      'video/mp4',
     ];
-    // Types with reliably identifiable magic bytes
     const MAGIC_CHECKED_TYPES = [
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'image/jpeg',
       'application/pdf',
-      'video/mp4', 'video/quicktime',
+      'video/mp4',
     ];
 
     if (buffer.length > MAX_SIZE) {

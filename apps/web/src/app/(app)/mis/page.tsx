@@ -26,10 +26,10 @@ const AVATAR_COLORS = [
 ];
 
 const CATEGORY_TAGS: Record<string, { label: string; bg: string; text: string }> = {
-  del: { label: 'DEL', bg: 'bg-orange-100', text: 'text-orange-700' },
-  wor: { label: 'WOR', bg: 'bg-blue-100',   text: 'text-blue-700' },
-  che: { label: 'CHE', bg: 'bg-purple-100', text: 'text-purple-700' },
-  fms: { label: 'FMS', bg: 'bg-green-100',  text: 'text-green-700' },
+  del: { label: 'DEL', bg: 'bg-[rgba(var(--warning),0.12)]', text: 'text-warning' },
+  wor: { label: 'WOR', bg: 'bg-[rgba(var(--primary),0.12)]', text: 'text-primary' },
+  che: { label: 'CHE', bg: 'bg-[rgba(var(--primary),0.12)]', text: 'text-primary' },
+  fms: { label: 'FMS', bg: 'bg-[rgba(var(--success),0.12)]', text: 'text-success' },
 };
 
 const DRILL_MAP: Record<string, { category: 'delegation' | 'workRequest' | 'checklist' | 'fms'; label: string }> = {
@@ -40,12 +40,12 @@ const DRILL_MAP: Record<string, { category: 'delegation' | 'workRequest' | 'chec
 };
 
 const GRADE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  A_PLUS: { label: 'A+', color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  A:      { label: 'A',  color: 'text-green-700',   bg: 'bg-green-100' },
-  B:      { label: 'B',  color: 'text-yellow-700',  bg: 'bg-yellow-100' },
-  C:      { label: 'C',  color: 'text-orange-700',  bg: 'bg-orange-100' },
-  D:      { label: 'D',  color: 'text-red-700',     bg: 'bg-red-100' },
-  N_A:    { label: '—',  color: 'text-slate-500',   bg: 'bg-slate-100' },
+  A_PLUS: { label: 'A+', color: 'text-success', bg: 'bg-[rgba(var(--success),0.12)]' },
+  A:      { label: 'A',  color: 'text-success', bg: 'bg-[rgba(var(--success),0.12)]' },
+  B:      { label: 'B',  color: 'text-warning', bg: 'bg-[rgba(var(--warning),0.12)]' },
+  C:      { label: 'C',  color: 'text-warning', bg: 'bg-[rgba(var(--warning),0.12)]' },
+  D:      { label: 'D',  color: 'text-danger',  bg: 'bg-[rgba(var(--error),0.12)]' },
+  N_A:    { label: '—',  color: 'text-muted-foreground', bg: 'bg-surface-muted' },
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -100,16 +100,16 @@ interface DrillTarget {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function pctColor(v: number) {
-  if (v === 0)   return 'text-green-600';
-  if (v >= -20)  return 'text-amber-600';
-  return 'text-red-500';
+  if (v === 0)   return 'text-success';
+  if (v >= -20)  return 'text-warning';
+  return 'text-danger';
 }
 
 function scoreColor(v: number | null | undefined) {
-  if (v === null || v === undefined) return 'text-slate-400';
-  if (v >= 80) return 'text-green-600';
-  if (v >= 60) return 'text-amber-600';
-  return 'text-red-500';
+  if (v === null || v === undefined) return 'text-muted-foreground';
+  if (v >= 80) return 'text-success';
+  if (v >= 60) return 'text-warning';
+  return 'text-danger';
 }
 
 function fmtKpi(v: number | undefined, unit: '%' | 'd') {
@@ -150,12 +150,12 @@ function DrillDownModal({ target, filters, onClose }: {
       {/* Custom header */}
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
             {target.label.toUpperCase()}: DRILL DOWN REPORT
           </p>
           <h2 className="text-xl font-bold font-display text-foreground">{kpiTitle}</h2>
           {target.kpi && (
-            <p className="flex items-center gap-1.5 text-sm font-medium text-red-500 mt-1">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-danger mt-1">
               <Filter className="h-3.5 w-3.5" />
               Showing tasks causing negative score
             </p>
@@ -163,12 +163,12 @@ function DrillDownModal({ target, filters, onClose }: {
         </div>
         <div className="flex items-start gap-2 flex-shrink-0">
           <div className="text-right bg-surface-muted rounded-xl px-4 py-2.5">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Employee</p>
-            <p className="text-sm font-bold text-indigo-700 mt-0.5">{target.name}</p>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Employee</p>
+            <p className="text-sm font-bold text-primary mt-0.5">{target.name}</p>
           </div>
           <button
             onClick={onClose}
-            className="mt-1 rounded-lg p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="mt-1 rounded-lg p-1.5 text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -178,38 +178,38 @@ function DrillDownModal({ target, filters, onClose }: {
       {/* Loading */}
       {isLoading && (
         <div className="h-48 flex items-center justify-center">
-          <div className="h-8 w-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+          <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
         </div>
       )}
 
       {/* Error */}
       {isError && !isLoading && (
         <div className="text-center py-12">
-          <p className="text-sm text-slate-500">Failed to load data</p>
-          <button onClick={() => refetch()} className="mt-2 text-sm text-indigo-600 hover:underline">Retry</button>
+          <p className="text-sm text-muted-foreground">Failed to load data</p>
+          <button onClick={() => refetch()} className="mt-2 text-sm text-primary hover:underline">Retry</button>
         </div>
       )}
 
       {/* Perfect Score */}
       {isPerfect && (
-        <div className="rounded-xl bg-green-50 border border-green-100 py-16 text-center">
-          <div className="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-3">
-            <Check className="h-6 w-6 text-contrast" />
+        <div className="rounded-xl bg-[rgba(var(--success),0.08)] border border-[rgba(var(--success),0.20)] py-16 text-center">
+          <div className="h-12 w-12 rounded-full bg-success flex items-center justify-center mx-auto mb-3">
+            <Check className="h-6 w-6 text-success-foreground" />
           </div>
-          <p className="text-lg font-bold text-green-700">Perfect Score!</p>
-          <p className="text-sm text-green-500 mt-1">No negative tasks found for this specific KPI.</p>
+          <p className="text-lg font-bold text-success">Perfect Score!</p>
+          <p className="text-sm text-success mt-1 opacity-80">No negative tasks found for this specific KPI.</p>
         </div>
       )}
 
       {/* Table */}
       {!isLoading && !isError && (!target.kpi || filtered.length > 0) && (
         <>
-          <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-surface-muted">
                   {['ID', 'TASK DESCRIPTION', 'PLAN DATE', 'ACTUAL DATE', 'DELAY', 'STATUS'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wide border-b border-border whitespace-nowrap">
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wide border-b border-border whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -222,20 +222,20 @@ function DrillDownModal({ target, filters, onClose }: {
                   const delay      = task.delayDays ?? 0;
                   const dispStatus = getDisplayStatus(task, planField);
                   return (
-                    <tr key={task.id ?? i} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                      <td className="px-4 py-3 text-slate-500 text-xs font-mono">
+                    <tr key={task.id ?? i} className="border-t border-border hover:bg-surface-muted">
+                      <td className="px-4 py-3 text-muted-foreground text-xs font-mono">
                         {task.taskId ?? (task.id ? String(task.id).slice(-6) : i + 1)}
                       </td>
                       <td className="px-4 py-3 text-foreground font-display font-medium max-w-xs">
                         {task.title ?? task.description ?? '—'}
                       </td>
-                      <td className="px-4 py-3 text-slate-600 text-xs whitespace-pre-line">
+                      <td className="px-4 py-3 text-muted-foreground text-xs whitespace-pre-line">
                         {planDate ? formatDate(planDate) : '—'}
                       </td>
-                      <td className="px-4 py-3 text-slate-500 text-xs">
+                      <td className="px-4 py-3 text-muted-foreground text-xs">
                         {actualDate ? formatDate(actualDate) : '-'}
                       </td>
-                      <td className={cn('px-4 py-3 text-xs font-bold', delay > 0 ? 'text-red-500' : 'text-slate-400')}>
+                      <td className={cn('px-4 py-3 text-xs font-bold', delay > 0 ? 'text-danger' : 'text-muted-foreground')}>
                         {delay > 0 ? `${delay} Days` : '-'}
                       </td>
                       <td className="px-4 py-3">
@@ -253,17 +253,17 @@ function DrillDownModal({ target, filters, onClose }: {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-surface-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            <span className="h-8 w-8 rounded-full bg-indigo-600 text-contrast text-sm font-bold flex items-center justify-center">
+            <span className="h-8 w-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
               {page}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-surface-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Next
             </button>
@@ -288,28 +288,28 @@ function SetTargetModal({ card, onClose }: { card: UserMisCard; onClose: () => v
   return (
     <Modal open onClose={onClose} title={`Set Weekly Target — ${card.name}`} size="sm">
       <div className="space-y-4 p-1">
-        <p className="text-sm text-slate-500">
-          Current score: <span className="font-semibold text-slate-700">{card.score ?? '—'}</span>
+        <p className="text-sm text-muted-foreground">
+          Current score: <span className="font-semibold text-foreground">{card.score ?? '—'}</span>
         </p>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Target score (0 – 100)</label>
+          <label className="block text-sm font-medium text-foreground mb-1">Target score (0 – 100)</label>
           <input
             type="number" min={0} max={100} value={score}
             onChange={(e) => setScore(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
           />
         </div>
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+            className="px-4 py-2 text-sm rounded-lg border border-border text-muted-foreground hover:bg-surface-muted"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="px-4 py-2 text-sm rounded-lg bg-indigo-600 text-contrast font-semibold hover:bg-indigo-700 disabled:opacity-60"
+            className="px-4 py-2 text-sm rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-60"
           >
             Save Target
           </button>
@@ -345,28 +345,28 @@ function EmployeeMisCard({
   const avgScore = m.total > 0 ? -((m.pending / m.total) * 100) : 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
+    <div className="rounded-xl border border-border bg-surface shadow-sm overflow-hidden flex flex-col">
 
       {/* Header */}
-      <div className="flex items-start justify-between px-5 py-4 border-b border-slate-100">
+      <div className="flex items-start justify-between px-5 py-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className={cn('h-10 w-10 rounded-full flex items-center justify-center text-contrast text-sm font-bold flex-shrink-0', avatarColor)}>
             {card.name[0].toUpperCase()}
           </div>
           <div>
-            <p className="text-base font-bold text-indigo-700">{card.name}</p>
-            <p className={cn('text-sm font-semibold', avgScore < 0 ? 'text-red-500' : 'text-green-600')}>
+            <p className="text-base font-bold text-primary">{card.name}</p>
+            <p className={cn('text-sm font-semibold', avgScore < 0 ? 'text-danger' : 'text-success')}>
               Avg. Score: {avgScore.toFixed(1)}%
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Last Week Planned Target Score:&nbsp;
-              <span className="font-medium text-slate-500">{card.lastWeekTarget ?? '—'}</span>
+              <span className="font-medium text-muted-foreground">{card.lastWeekTarget ?? '—'}</span>
             </p>
           </div>
         </div>
         <button
           onClick={() => onSetTarget(card)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-contrast text-sm font-semibold hover:bg-indigo-700 transition-colors flex-shrink-0"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-colors flex-shrink-0"
         >
           <RefreshCw className="h-4 w-4" />
           Update
@@ -374,28 +374,28 @@ function EmployeeMisCard({
       </div>
 
       {/* Summary badges */}
-      <div className="flex justify-end gap-2 px-5 py-3 border-b border-slate-100">
-        <span className="rounded-full border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1">
+      <div className="flex justify-end gap-2 px-5 py-3 border-b border-border">
+        <span className="rounded-full border border-border text-foreground text-xs font-semibold px-3 py-1">
           Total: {m.total}
         </span>
-        <span className="rounded-full bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1">
+        <span className="rounded-full bg-[rgba(var(--warning),0.12)] text-warning text-xs font-semibold px-3 py-1">
           Pending: {m.pending}
         </span>
-        <span className="rounded-full bg-green-100 text-green-700 text-xs font-semibold px-3 py-1">
+        <span className="rounded-full bg-[rgba(var(--success),0.12)] text-success text-xs font-semibold px-3 py-1">
           Done: {m.completed}
         </span>
-        <span className="rounded-full bg-red-100 text-red-700 text-xs font-semibold px-3 py-1">
+        <span className="rounded-full bg-[rgba(var(--error),0.12)] text-danger text-xs font-semibold px-3 py-1">
           Late: {m.late}
         </span>
       </div>
 
       {/* Category breakdown table */}
-      <div className="px-5 py-3 border-b border-slate-100">
+      <div className="px-5 py-3 border-b border-border">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="text-slate-500 uppercase text-[10px] font-semibold tracking-wide">
+            <tr className="text-muted-foreground uppercase text-[10px] font-semibold tracking-wide">
               <th className="text-left py-2 pr-2">Category</th>
-              <th className="text-center py-2 px-1 bg-slate-100 rounded">Total</th>
+              <th className="text-center py-2 px-1 bg-surface-muted rounded">Total</th>
               <th className="text-center py-2 px-1">Done</th>
               <th className="text-center py-2 px-1">Pend</th>
               <th className="text-center py-2 px-1">On Time</th>
@@ -410,35 +410,35 @@ function EmployeeMisCard({
               return (
                 <tr
                   key={key}
-                  className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                  className="border-t border-border hover:bg-surface-muted cursor-pointer transition-colors"
                   onClick={() => onDrill({ userId: card.userId, name: card.name, ...drill })}
                 >
-                  <td className="py-2 pr-2 text-slate-600 font-medium">{label}</td>
-                  <td className="py-2 px-1 text-center font-bold text-slate-800">{r.total}</td>
-                  <td className="py-2 px-1 text-center font-semibold text-blue-600">{r.completed}</td>
-                  <td className="py-2 px-1 text-center font-semibold text-amber-500">{r.pending}</td>
-                  <td className="py-2 px-1 text-center font-semibold text-green-600">{r.onTime}</td>
-                  <td className="py-2 px-1 text-center font-semibold text-red-500">{r.late}</td>
-                  <td className="py-2 px-1 text-center font-semibold text-red-500">{r.delayDays}</td>
+                  <td className="py-2 pr-2 text-muted-foreground font-medium">{label}</td>
+                  <td className="py-2 px-1 text-center font-bold text-foreground">{r.total}</td>
+                  <td className="py-2 px-1 text-center font-semibold text-primary">{r.completed}</td>
+                  <td className="py-2 px-1 text-center font-semibold text-warning">{r.pending}</td>
+                  <td className="py-2 px-1 text-center font-semibold text-success">{r.onTime}</td>
+                  <td className="py-2 px-1 text-center font-semibold text-danger">{r.late}</td>
+                  <td className="py-2 px-1 text-center font-semibold text-danger">{r.delayDays}</td>
                 </tr>
               );
             })}
             {/* Total row */}
-            <tr className="border-t-2 border-slate-300 bg-indigo-50/60">
-              <td className="py-2 pr-2 font-bold text-slate-800 uppercase text-[11px] tracking-wide">Total</td>
-              <td className="py-2 px-1 text-center font-bold text-slate-800">{m.total}</td>
-              <td className="py-2 px-1 text-center font-bold text-blue-600">{m.completed}</td>
-              <td className="py-2 px-1 text-center font-bold text-amber-500">{m.pending}</td>
-              <td className="py-2 px-1 text-center font-bold text-green-600">{m.onTime}</td>
-              <td className="py-2 px-1 text-center font-bold text-red-500">{m.late}</td>
-              <td className="py-2 px-1 text-center font-bold text-red-500">{m.delayDays}</td>
+            <tr className="border-t-2 border-border bg-surface-muted">
+              <td className="py-2 pr-2 font-bold text-foreground uppercase text-[11px] tracking-wide">Total</td>
+              <td className="py-2 px-1 text-center font-bold text-foreground">{m.total}</td>
+              <td className="py-2 px-1 text-center font-bold text-primary">{m.completed}</td>
+              <td className="py-2 px-1 text-center font-bold text-warning">{m.pending}</td>
+              <td className="py-2 px-1 text-center font-bold text-success">{m.onTime}</td>
+              <td className="py-2 px-1 text-center font-bold text-danger">{m.late}</td>
+              <td className="py-2 px-1 text-center font-bold text-danger">{m.delayDays}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* KPI breakdown rows — per category, 3 KPIs each, clickable */}
-      <div className="divide-y divide-slate-50">
+      <div className="divide-y divide-border">
         {CAT_ROWS.map(({ key }) => {
           const tag  = CATEGORY_TAGS[key];
           const drill = DRILL_MAP[key];
@@ -453,12 +453,12 @@ function EmployeeMisCard({
                 <div
                   key={kpi}
                   onClick={() => onDrill({ userId: card.userId, name: card.name, ...drill, kpi })}
-                  className="flex items-center gap-3 px-5 py-2 hover:bg-indigo-50 cursor-pointer transition-colors"
+                  className="flex items-center gap-3 px-5 py-2 hover:bg-surface-muted cursor-pointer transition-colors"
                 >
                   <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-bold flex-shrink-0', tag.bg, tag.text)}>
                     {tag.label}
                   </span>
-                  <span className="flex-1 text-xs text-slate-500">{KPI_LABELS[kpi]}</span>
+                  <span className="flex-1 text-xs text-muted-foreground">{KPI_LABELS[kpi]}</span>
                   <span className={cn('text-xs font-semibold flex-shrink-0', pctColor(value))}>
                     {fmtKpi(value, unit)}
                   </span>
@@ -486,12 +486,12 @@ function DetailedAnalysisTable({
     { key: 'name',    header: 'Employee', sortable: true },
     { key: 'role',    header: 'Role',     sortable: true },
     { key: 'metrics', header: 'Total',    render: (m) => m.total },
-    { key: 'metrics', header: 'Done',     render: (m) => <span className="text-green-600">{m.completed}</span> },
-    { key: 'metrics', header: 'Pending',  render: (m) => <span className="text-amber-600">{m.pending}</span> },
-    { key: 'metrics', header: 'Late',     render: (m) => <span className="text-red-500">{m.late}</span> },
+    { key: 'metrics', header: 'Done',     render: (m) => <span className="text-success">{m.completed}</span> },
+    { key: 'metrics', header: 'Pending',  render: (m) => <span className="text-warning">{m.pending}</span> },
+    { key: 'metrics', header: 'Late',     render: (m) => <span className="text-danger">{m.late}</span> },
     { key: 'metrics', header: 'On-Time %', render: (m) => `${m.onTimePercent}%` },
     { key: 'metrics', header: 'Avg Delay', render: (m) => m.delayDays > 0 ? `${m.delayDays}d` : '—' },
-    { key: 'metrics', header: 'Reworks',  render: (m) => m.reworkCount > 0 ? <span className="text-orange-500">{m.reworkCount}</span> : '0' },
+    { key: 'metrics', header: 'Reworks',  render: (m) => m.reworkCount > 0 ? <span className="text-warning">{m.reworkCount}</span> : '0' },
     {
       key: 'score', header: 'Score', sortable: true,
       render: (v) => (
@@ -512,7 +512,7 @@ function DetailedAnalysisTable({
       render: (v, row) => (
         <button
           onClick={() => onSetTarget(row)}
-          className="flex items-center gap-1 text-indigo-600 hover:underline text-sm"
+          className="flex items-center gap-1 text-primary hover:underline text-sm"
         >
           <Target className="h-3 w-3" />
           {v ?? 'Set'}
@@ -570,25 +570,25 @@ export default function MisPage() {
       value: summary ? `${summary.avgWorkNotDone ?? 0}%` : '—',
       label: 'Avg. Work Not Done',
       badge: 'Not Done',
-      badgeColor: 'bg-red-100 text-red-600',
+      badgeColor: 'bg-[rgba(var(--error),0.12)] text-danger',
     },
     {
       value: summary ? `${summary.avgWorkDelayed ?? 0}%` : '—',
       label: 'Avg. Work Delayed Pending',
       badge: 'Delayed',
-      badgeColor: 'bg-amber-100 text-amber-600',
+      badgeColor: 'bg-[rgba(var(--warning),0.12)] text-warning',
     },
     {
       value: summary?.avgChecklistPending ?? (isLoading ? '—' : 0),
       label: 'Avg. Checklist Pending',
       badge: 'Checklist',
-      badgeColor: 'bg-green-100 text-green-600',
+      badgeColor: 'bg-[rgba(var(--success),0.12)] text-success',
     },
     {
       value: summary?.totalEmployees ?? cards.length,
       label: 'Total Employees',
       badge: 'Active',
-      badgeColor: 'bg-cyan-100 text-cyan-600',
+      badgeColor: 'bg-[rgba(var(--primary),0.12)] text-primary',
     },
   ];
 
@@ -600,7 +600,7 @@ export default function MisPage() {
         <button
           onClick={() => saveSnapshot()}
           disabled={snapshotPending}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-contrast text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-60 transition-colors"
         >
           <Camera className="h-4 w-4" />
           {snapshotPending ? 'Saving…' : 'Save Snapshot'}
@@ -621,11 +621,11 @@ export default function MisPage() {
         {statCards.map(({ value, label, badge, badgeColor }) => (
           <div
             key={label}
-            className="rounded-xl border border-slate-200 bg-surface dark:border-slate-700 shadow-sm p-5 flex items-start justify-between"
+            className="rounded-xl border border-border bg-surface shadow-sm p-5 flex items-start justify-between"
           >
             <div>
               <p className="text-2xl font-bold text-foreground">{value}</p>
-              <p className="text-xs text-slate-500 mt-1 leading-snug">{label}</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-snug">{label}</p>
             </div>
             <span className={cn('text-xs font-semibold rounded-full px-2 py-0.5 mt-0.5 flex-shrink-0', badgeColor)}>
               {badge}
@@ -642,8 +642,8 @@ export default function MisPage() {
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors',
               viewMode === 'cards'
-                ? 'bg-indigo-600 text-contrast'
-                : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200',
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground',
             )}
           >
             <LayoutGrid className="h-4 w-4" />
@@ -654,8 +654,8 @@ export default function MisPage() {
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm font-semibold border-l border-border transition-colors',
               viewMode === 'table'
-                ? 'bg-indigo-600 text-contrast'
-                : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200',
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground',
             )}
           >
             <List className="h-4 w-4" />
@@ -666,7 +666,7 @@ export default function MisPage() {
         <button
           onClick={() => refetch()}
           title="Refresh"
-          className="p-2 rounded-lg border border-border bg-surface text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-colors"
+          className="p-2 rounded-lg border border-border bg-surface text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
         >
           <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
         </button>
@@ -676,7 +676,7 @@ export default function MisPage() {
       {isError && (
         <div className="rounded-xl border border-border bg-surface shadow-sm hover:shadow-md transition-shadow py-12 text-center">
           <p className="text-sm font-medium text-muted-foreground">Failed to load MIS data</p>
-          <button onClick={() => refetch()} className="mt-2 text-sm font-medium text-indigo-600 hover:underline">
+          <button onClick={() => refetch()} className="mt-2 text-sm font-medium text-primary hover:underline">
             Retry
           </button>
         </div>
@@ -687,12 +687,12 @@ export default function MisPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-slate-200 bg-white h-96 animate-pulse" />
+                <div key={i} className="rounded-xl border border-border bg-surface h-96 animate-pulse" />
               ))
             : cards.length === 0
             ? (
               <div className="col-span-2 rounded-xl border border-dashed border-border bg-surface py-16 text-center">
-                <p className="text-sm text-slate-500">No employee data for the selected filters</p>
+                <p className="text-sm text-muted-foreground">No employee data for the selected filters</p>
               </div>
             )
             : cards.map((card, idx) => (

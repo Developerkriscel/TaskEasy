@@ -44,7 +44,7 @@ export class UploadsController {
   @Post('multiple')
   @RequirePermissions('upload.file')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('files', 10))
+  @UseInterceptors(FilesInterceptor('files', 5))
   async uploadMultiple(
     @UploadedFiles() files: Express.Multer.File[],
     @CurrentUser() user: JwtPayload,

@@ -17,7 +17,7 @@ export function useCreateHierarchyGroup() {
     mutationFn: hierarchyApi.create,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['hierarchy'] });
-      toast.success('Group created');
+      toast.success('Group created!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -30,7 +30,7 @@ export function useUpdateHierarchyGroup() {
       hierarchyApi.update(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['hierarchy'] });
-      toast.success('Group updated');
+      toast.success('Group updated!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -42,7 +42,7 @@ export function useDeleteHierarchyGroup() {
     mutationFn: hierarchyApi.remove,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['hierarchy'] });
-      toast.success('Group deleted');
+      toast.success('Group removed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

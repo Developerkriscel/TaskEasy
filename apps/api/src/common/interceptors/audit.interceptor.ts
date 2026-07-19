@@ -48,6 +48,12 @@ function moduleFromPath(path: string): string {
   return MODULE_MAP[segment] ?? 'AUDIT';
 }
 
+function getClientIp(req: any): string | undefined {
+  const forwardedFor = req.headers?.['x-forwarded-for'];
+  const firstForwarded = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
+  return firstForwarded?.split(',')[0]?.trim() || req.ip;
+}
+
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
   private readonly logger = new Logger(AuditInterceptor.name);
@@ -81,7 +87,7 @@ export class AuditInterceptor implements NestInterceptor {
               action: action as any,
               module: module as any,
               description,
-              ipAddress: req.ip,
+              ipAddress: getClientIp(req),
               userAgent: req.headers['user-agent'],
             },
           });

@@ -27,6 +27,10 @@ async function bootstrap() {
     ),
   );
 
+  // Trust CloudPanel/Nginx proxy headers so req.ip reflects the real client
+  // instead of Docker bridge addresses like 172.18.0.1.
+  app.getHttpAdapter().getInstance().set('trust proxy', true);
+
   // ── Security ──────────────────────────────────────────────
   app.use(helmet());
   app.use(compression());

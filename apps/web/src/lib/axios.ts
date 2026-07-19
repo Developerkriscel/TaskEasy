@@ -148,14 +148,23 @@ export async function apiUpload<T>(url: string, formData: FormData): Promise<T> 
 export function getApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const errData = error.response?.data?.error;
+    const status = error.response?.status;
     if (errData?.errors && Array.isArray(errData.errors) && errData.errors.length > 0) {
       return errData.errors[0];
     }
-    return (
+    const message = (
       errData?.message ||
       error.response?.data?.message ||
       error.message
     );
+    if (
+      status === 403 ||
+      /Role '.+' is not authorized for this action/i.test(String(message)) ||
+      /Required:\s*[A-Z_,\s]+/i.test(String(message))
+    ) {
+      return 'Access denied';
+    }
+    return message;
   }
   return 'An unexpected error occurred';
 }

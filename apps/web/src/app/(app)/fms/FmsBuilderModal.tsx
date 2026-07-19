@@ -96,7 +96,7 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
                 <tr key={i}>
                   <td className="px-2 py-1.5">
                     <input
-                      className="w-40 rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-40 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                       value={f.label}
                       onChange={(e) => updateField(i, 'label', e.target.value)}
                       placeholder="Field label"
@@ -104,7 +104,7 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
                   </td>
                   <td className="px-2 py-1.5">
                     <select
-                      className="rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                       value={f.type}
                       onChange={(e) => updateField(i, 'type', e.target.value)}
                     >
@@ -115,12 +115,12 @@ function ConfigureFormModal({ step, onClose, onSave }: ConfigureFormModalProps) 
                   </td>
                   <td className="px-2 py-1.5 text-center">
                     <input type="checkbox" checked={f.required} onChange={(e) => updateField(i, 'required', e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      className="h-3.5 w-3.5 rounded border-border text-primary focus:ring-primary/10"
                     />
                   </td>
                   <td className="px-2 py-1.5">
                     <select
-                      className="rounded border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                       value={f.editable ? 'editable' : 'readonly'}
                       onChange={(e) => updateField(i, 'editable', e.target.value === 'editable')}
                     >
@@ -375,7 +375,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
               value={flowName}
               onChange={(e) => setFlowName(e.target.value)}
               placeholder="Enter workflow name…"
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
 
@@ -420,7 +420,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           value={step.title}
                           onChange={(e) => updateStep(idx, 'title', e.target.value)}
                           placeholder="Step title…"
-                          className="w-44 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-44 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         />
                       </td>
 
@@ -430,7 +430,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           value={step.description}
                           onChange={(e) => updateStep(idx, 'description', e.target.value)}
                           placeholder="Description…"
-                          className="w-44 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-44 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         />
                       </td>
 
@@ -441,7 +441,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                           min={1}
                           value={step.tatValue}
                           onChange={(e) => updateStep(idx, 'tatValue', Math.max(1, Number(e.target.value)))}
-                          className="w-16 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-16 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         />
                       </td>
 
@@ -450,7 +450,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.tatUnit}
                           onChange={(e) => updateStep(idx, 'tatUnit', e.target.value)}
-                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         >
                           <option value="days">Days</option>
                           <option value="hours">Hours</option>
@@ -462,7 +462,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.role}
                           onChange={(e) => updateStep(idx, 'role', e.target.value)}
-                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         >
                           <option value="Employee">Employee</option>
                           <option value="Admin">Admin</option>
@@ -475,7 +475,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.actionType}
                           onChange={(e) => updateStep(idx, 'actionType', e.target.value)}
-                          className="rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         >
                           <option value="submit">submit</option>
                           <option value="review">review</option>
@@ -488,7 +488,7 @@ export function FmsBuilderModal({ open, onClose, initialName = '', initialSteps 
                         <select
                           value={step.assignedToId}
                           onChange={(e) => updateStep(idx, 'assignedToId', e.target.value)}
-                          className="w-36 rounded border border-border bg-surface px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-36 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                         >
                           <option value="">Select user</option>
                           {users.map((u) => (

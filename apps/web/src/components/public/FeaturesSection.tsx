@@ -1,63 +1,126 @@
 'use client';
 
-import { CheckSquare, Target, RefreshCw, BarChart3 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  BellDot,
+  ClipboardCheck,
+  FileSpreadsheet,
+  GitPullRequestArrow,
+  Layers3,
+  LineChart,
+  Network,
+  ShieldCheck,
+} from 'lucide-react';
 
-const features = [
+const modules = [
   {
-    icon: CheckSquare,
-    title: 'Smart Prioritization',
-    description: 'Intelligently rank tasks based on deadlines and importance using our proprietary algorithm.',
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
+    icon: GitPullRequestArrow,
+    title: 'Delegation Workflow',
+    description: 'Assign tasks with project, priority, deadline, proof attachments and approval status.',
+    accent: '#0866FF',
   },
   {
-    icon: Target,
-    title: 'Focus Mode',
-    description: 'A distraction-free environment for deep work sessions with integrated ambient sounds.',
-    color: 'text-orange-600',
-    bg: 'bg-orange-50',
+    icon: Layers3,
+    title: 'Work Requests',
+    description: 'Request work from the right doer, collect completion proof and approve or send rework.',
+    accent: '#10B981',
   },
   {
-    icon: RefreshCw,
-    title: 'Seamless Sync',
-    description: 'Access your tasks across all your devices instantly with offline support and cloud backup.',
-    color: 'text-blue-600',
-    bg: 'bg-blue-50',
+    icon: ClipboardCheck,
+    title: 'Checklist Compliance',
+    description: 'Daily, weekly, monthly and one-time checklist planning with bulk completion support.',
+    accent: '#F59E0B',
   },
   {
-    icon: BarChart3,
-    title: 'Progress Analytics',
-    description: 'Visualize your productivity trends with elegant charts and weekly performance reports.',
-    color: 'text-rose-600',
-    bg: 'bg-rose-50',
+    icon: Network,
+    title: 'FMS Tracking',
+    description: 'Track planned date, actual date, delay days, form links and on-time status for each step.',
+    accent: '#EC4899',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Approve / Review',
+    description: 'One approval queue for delegation, work request and checklist submissions.',
+    accent: '#14B8A6',
+  },
+  {
+    icon: LineChart,
+    title: 'MIS Performance',
+    description: 'Measure completed, pending, late, rework, delay days and weekly target score.',
+    accent: '#7C3AED',
+  },
+  {
+    icon: FileSpreadsheet,
+    title: 'Reports and Exports',
+    description: 'Filter by user, project, status and date range with Excel and PDF-ready views.',
+    accent: '#0EA5E9',
+  },
+  {
+    icon: BellDot,
+    title: 'Notification Dots',
+    description: 'Sidebar signals show pending approvals, delegation, checklist and work requests.',
+    accent: '#F97316',
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Everything you need, nothing you don&apos;t.
-          </h2>
-          <p className="text-gray-500 max-w-lg mx-auto">
-            Focus on your work, not on managing your tools. Our features are built for maximum cognitive clarity.
-          </p>
+    <section id="modules" className="bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mx-auto mb-14 max-w-3xl text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-xs font-black uppercase tracking-[0.18em] text-[#0866FF]"
+          >
+            Real TaskEasy Modules
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.05 }}
+            className="mt-3 text-3xl font-black text-[#08295C] sm:text-4xl"
+          >
+            A light, fast command center for every work cycle.
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="mt-4 text-base leading-7 text-[#5C7188]"
+          >
+            TaskEasy is not a simple to-do list. It is a complete role-based task,
+            approval and performance system built around how your dashboard actually works.
+          </motion.p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="rounded-xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-100 transition-shadow"
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {modules.map((module, index) => (
+            <motion.div
+              key={module.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45, delay: index * 0.04 }}
+              whileHover={{ y: -6 }}
+              className="group relative overflow-hidden rounded-xl border border-[#DDEAF6] bg-[#FBFDFF] p-5 shadow-sm transition-shadow hover:shadow-xl hover:shadow-[#0866FF]/8"
             >
-              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${f.bg} mb-4`}>
-                <f.icon className={`h-5 w-5 ${f.color}`} />
+              <div
+                className="absolute right-[-44px] top-[-44px] h-24 w-24 rounded-full opacity-15 transition-transform duration-500 group-hover:scale-125"
+                style={{ backgroundColor: module.accent }}
+              />
+              <div
+                className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg"
+                style={{ backgroundColor: `${module.accent}18`, color: module.accent }}
+              >
+                <module.icon className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
-            </div>
+              <h3 className="text-base font-black text-[#08295C]">{module.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#5C7188]">{module.description}</p>
+            </motion.div>
           ))}
         </div>
       </div>

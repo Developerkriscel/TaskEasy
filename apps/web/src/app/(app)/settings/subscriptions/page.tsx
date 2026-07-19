@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft, Check, CreditCard, Users, GitBranch, Loader2,
@@ -275,8 +276,8 @@ export default function SubscriptionsPage() {
       )}
 
       {/* Reason modal */}
-      {reasonPlanId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      {reasonPlanId && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(2,6,23,0.5)] backdrop-blur-md">
           <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 space-y-4 shadow-xl">
             <h3 className="font-semibold text-foreground flex items-center gap-2">
               <Send className="h-4 w-4 text-primary" />
@@ -290,7 +291,7 @@ export default function SubscriptionsPage() {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
             <div className="flex justify-end gap-2">
               <Button variant="outline" size="sm" onClick={() => { setReasonPlanId(null); setReason(''); }}>
@@ -301,7 +302,8 @@ export default function SubscriptionsPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {/* Request history */}

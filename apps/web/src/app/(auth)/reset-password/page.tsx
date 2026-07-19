@@ -63,7 +63,7 @@ function ResetPasswordForm() {
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
               required
               minLength={8}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
           <div>
@@ -75,7 +75,7 @@ function ResetPasswordForm() {
               value={form.confirm}
               onChange={(e) => setForm((f) => ({ ...f, confirm: e.target.value }))}
               required
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             />
           </div>
           <button

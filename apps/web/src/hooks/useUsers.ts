@@ -29,7 +29,7 @@ export function useCreateUser() {
     mutationFn: usersApi.create,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] });
-      toast.success('User created successfully');
+      toast.success('User added!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -42,7 +42,7 @@ export function useUpdateUser() {
       usersApi.update(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] });
-      toast.success('User updated');
+      toast.success('User updated!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -55,7 +55,7 @@ export function useToggleUserStatus() {
       usersApi.updateStatus(id, status),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] });
-      toast.success('User status updated');
+      toast.success('Status changed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -67,7 +67,7 @@ export function useDeleteUser() {
     mutationFn: usersApi.remove,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] });
-      toast.success('User removed');
+      toast.success('User removed!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

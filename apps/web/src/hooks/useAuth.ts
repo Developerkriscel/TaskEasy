@@ -68,7 +68,7 @@ export function useChangePassword() {
       currentPassword: string;
       newPassword: string;
     }) => authApi.changePassword(currentPassword, newPassword),
-    onSuccess: () => toast.success('Password changed successfully'),
+    onSuccess: () => toast.success('Password updated!'),
     onError: (err) => toast.error(getApiError(err)),
   });
 }

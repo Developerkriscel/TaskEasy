@@ -712,7 +712,7 @@ export default function FmsPage() {
           <select
             value={selectedWorkflowId}
             onChange={(e) => setSelectedWorkflowId(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm outline-none focus:border-indigo-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
             disabled={workflowsLoading}
           >
             <option value="">{workflowsLoading ? 'Loading workflows...' : 'Select workflow'}</option>
@@ -882,7 +882,7 @@ export default function FmsPage() {
                 <select
                   value={aiConfigMode}
                   onChange={(e) => setAiConfigMode(e.target.value as 'Manual' | 'Sheet')}
-                  className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground outline-none focus:border-indigo-500"
+                  className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                 >
                   <option value="Manual">Manual</option>
                   <option value="Sheet">Sheet</option>
@@ -894,7 +894,7 @@ export default function FmsPage() {
                 <select
                   value={aiSelectedConfig}
                   onChange={(e) => handleSelectConfig(e.target.value)}
-                  className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-600 bg-surface px-3 py-2 text-sm text-muted-foreground outline-none focus:border-indigo-500"
+                  className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                 >
                   <option value="">Select saved sheet configuration</option>
                   {aiSavedConfigs.map((cfg) => (
@@ -979,14 +979,14 @@ export default function FmsPage() {
                               value={field.label}
                               onChange={(e) => handleFieldProp(i, 'label', e.target.value)}
                               placeholder={`Field ${i + 1}`}
-                              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground outline-none focus:border-indigo-400"
+                              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                             />
                           </td>
                           <td className="px-2 py-1.5">
                             <select
                               value={field.type}
                               onChange={(e) => handleFieldProp(i, 'type', e.target.value)}
-                              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground outline-none focus:border-indigo-400"
+                              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40 focus:ring-1 focus:ring-primary/10"
                             >
                               {['text', 'number', 'date', 'checkbox', 'dropdown', 'textarea'].map((t) => (
                                 <option key={t} value={t}>{t}</option>

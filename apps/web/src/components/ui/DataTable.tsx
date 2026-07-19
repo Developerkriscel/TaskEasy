@@ -39,6 +39,12 @@ interface DataTableProps<T = any> {
   headerActions?: React.ReactNode;
   rowKey?: (row: T) => string;
   pageSize?: number;
+  /** Enable row selection with checkboxes */
+  selectable?: boolean;
+  /** Currently selected row IDs (controlled) */
+  selectedIds?: Set<string>;
+  /** Called when selection changes */
+  onSelectionChange?: (ids: Set<string>) => void;
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -49,6 +55,7 @@ export function DataTable<T extends Record<string, any>>({
   emptyDescription, emptyIcon, emptyAction,
   headerActions,
   rowKey, pageSize = 25,
+  selectable = false, selectedIds, onSelectionChange,
 }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
@@ -76,6 +83,35 @@ export function DataTable<T extends Record<string, any>>({
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const paged = sorted.slice((page - 1) * pageSize, page * pageSize);
 
+  const getRowId = (row: T, index: number) => rowKey ? rowKey(row) : String(index);
+
+  const pagedIds = useMemo(() => paged.map((row, i) => getRowId(row, (page - 1) * pageSize + i)), [paged, page, pageSize, rowKey]);
+
+  const allPageSelected = selectable && pagedIds.length > 0 && pagedIds.every((id) => selectedIds?.has(id));
+  const somePageSelected = selectable && pagedIds.some((id) => selectedIds?.has(id));
+
+  const handleSelectAll = () => {
+    if (!onSelectionChange || !selectedIds) return;
+    const next = new Set(selectedIds);
+    if (allPageSelected) {
+      pagedIds.forEach((id) => next.delete(id));
+    } else {
+      pagedIds.forEach((id) => next.add(id));
+    }
+    onSelectionChange(next);
+  };
+
+  const handleSelectRow = (id: string) => {
+    if (!onSelectionChange || !selectedIds) return;
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    onSelectionChange(next);
+  };
+
   const handleSort = (key: string) => {
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
@@ -90,8 +126,6 @@ export function DataTable<T extends Record<string, any>>({
 
   const handleExcelExport = () => {
     if (!exportFilename) return;
-    // NOTE: sort/filter here is page-local; server-side pagination callers should
-    // handle sorting server-side and pass allData for full-dataset exports.
     const exportData = allData ?? sorted;
     const rows = exportData.map((row) =>
       Object.fromEntries(columns.map((c) => [c.header, row[c.key]])),
@@ -151,6 +185,17 @@ export function DataTable<T extends Record<string, any>>({
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 border-b border-border bg-surface-muted">
               <tr>
+                {selectable && (
+                  <th className="w-10 px-3 py-2.5">
+                    <input
+                      type="checkbox"
+                      checked={allPageSelected}
+                      ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected; }}
+                      onChange={handleSelectAll}
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                  </th>
+                )}
                 {columns.map((col) => (
                   <th
                     key={col.key}
@@ -173,6 +218,7 @@ export function DataTable<T extends Record<string, any>>({
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
+                    {selectable && <td className="px-3 py-3"><div className="h-4 w-4 animate-pulse rounded bg-surface-muted" /></td>}
                     {columns.map((c) => (
                       <td key={c.key} className="px-4 py-3">
                         <div className="h-4 animate-pulse rounded-full bg-surface-muted" />
@@ -182,7 +228,7 @@ export function DataTable<T extends Record<string, any>>({
                 ))
               ) : error ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-4 py-12 text-center">
+                  <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <AlertTriangle className="h-6 w-6 text-red-400" />
                       <p className="text-sm font-medium text-foreground/80">
@@ -203,7 +249,7 @@ export function DataTable<T extends Record<string, any>>({
                 </tr>
               ) : paged.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-4 py-0">
+                  <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-0">
                     <EmptyState
                       icon={emptyIcon}
                       title={search.trim() ? 'No matching results' : emptyMessage}
@@ -213,18 +259,35 @@ export function DataTable<T extends Record<string, any>>({
                   </td>
                 </tr>
               ) : (
-                paged.map((row, i) => (
-                  <tr
-                    key={rowKey ? rowKey(row) : i}
-                    className="transition-colors hover:bg-surface-muted/70"
-                  >
-                    {columns.map((col) => (
-                      <td key={col.key} className={cn('px-4 py-3 text-foreground/90', col.className)}>
-                        {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '—')}
-                      </td>
-                    ))}
-                  </tr>
-                ))
+                paged.map((row, i) => {
+                  const id = getRowId(row, (page - 1) * pageSize + i);
+                  const isSelected = selectedIds?.has(id) ?? false;
+                  return (
+                    <tr
+                      key={id}
+                      className={cn(
+                        'transition-colors hover:bg-surface-muted/70',
+                        isSelected && selectable && 'bg-indigo-50/50 dark:bg-indigo-950/20',
+                      )}
+                    >
+                      {selectable && (
+                        <td className="px-3 py-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleSelectRow(id)}
+                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                          />
+                        </td>
+                      )}
+                      {columns.map((col) => (
+                        <td key={col.key} className={cn('px-4 py-3 text-foreground/90', col.className)}>
+                          {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '—')}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

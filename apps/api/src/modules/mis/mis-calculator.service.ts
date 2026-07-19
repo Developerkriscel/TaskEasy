@@ -193,7 +193,7 @@ export class MisCalculatorService {
     tasks: { status: string; onTimeStatus: string | null; delayDays: number | null; reworkCount: number }[],
   ): CategoryRaw {
     const total       = tasks.length;
-    const completed   = tasks.filter((t) => t.status === 'COMPLETED').length;
+    const completed   = tasks.filter((t) => t.status === 'COMPLETED' || t.status === 'SEND_FOR_APPROVAL').length;
     const pending     = total - completed;
     const late        = tasks.filter((t) => t.onTimeStatus === 'LATE').length;
     const onTime      = tasks.filter((t) => t.onTimeStatus === 'ON_TIME').length;

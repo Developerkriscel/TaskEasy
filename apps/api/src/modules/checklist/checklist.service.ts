@@ -57,10 +57,13 @@ export class ChecklistService {
       }
     }
 
-    const project = await this.prisma.project.findFirst({
-      where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
-    });
-    if (!project) throw new BadRequestException('Project not found or inactive');
+    const hasProject = dto.projectId && dto.projectId !== 'NA';
+    if (hasProject) {
+      const project = await this.prisma.project.findFirst({
+        where: { id: dto.projectId, tenantId, status: 'ACTIVE' },
+      });
+      if (!project) throw new BadRequestException('Project not found or inactive');
+    }
 
     // Create one master per assignee — BUG-01 fix: atomic sequence per master
     const masters = await Promise.all(
@@ -72,13 +75,15 @@ export class ChecklistService {
             masterId: generateChecklistMasterId(seq),
             assignedToId: user.id,
             createdBy,
-            projectId: dto.projectId,
+            projectId: hasProject ? dto.projectId : undefined,
             title: dto.title,
             description: dto.description,
             frequency: dto.frequency,
             startDate: new Date(dto.startDate),
             startTime: dto.startTime ?? DEFAULT_START_TIME,
             endDate: dto.endDate ? new Date(dto.endDate) : null,
+            days: dto.days ?? [],
+            extraDates: dto.extraDates ?? [],
             attachmentRequired: dto.attachmentRequired ?? false,
             isActive: true,
           },
@@ -461,6 +466,15 @@ export class ChecklistService {
     await this.redis.delByPattern(CachePatterns.dashboard(tenantId));
     await this.redis.delByPattern(CachePatterns.mis(tenantId));
     return { completed: pending.length, message: 'Tasks submitted for approval' };
+  }
+
+  async bulkDelete(ids: string[], tenantId: string) {
+    const result = await this.prisma.checklistTask.deleteMany({
+      where: { id: { in: ids }, tenantId },
+    });
+    await this.redis.delByPattern(CachePatterns.dashboard(tenantId));
+    await this.redis.delByPattern(CachePatterns.mis(tenantId));
+    return { deleted: result.count };
   }
 
   async getPendingCount(tenantId: string, userId: string): Promise<number> {

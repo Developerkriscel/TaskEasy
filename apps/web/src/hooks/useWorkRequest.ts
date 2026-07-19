@@ -25,7 +25,7 @@ export function useCreateWorkRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['work-requests'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Work request created');
+      toast.success('Request created!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -39,7 +39,7 @@ export function useSubmitWorkRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['work-requests'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Submitted for approval');
+      toast.success('Sent for approval!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -54,7 +54,7 @@ export function useApproveWorkRequest() {
       qc.invalidateQueries({ queryKey: ['work-requests'] });
       qc.invalidateQueries({ queryKey: ['approvals'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Approved');
+      toast.success('Approved!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });
@@ -69,7 +69,20 @@ export function useReworkWorkRequest() {
       qc.invalidateQueries({ queryKey: ['work-requests'] });
       qc.invalidateQueries({ queryKey: ['approvals'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success('Sent for rework');
+      toast.success('Sent back for rework');
+    },
+    onError: (err) => toast.error(getApiError(err)),
+  });
+}
+
+export function useBulkDeleteWorkRequest() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) => workRequestApi.bulkDelete(ids),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['work-requests'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      toast.success('All cleared!');
     },
     onError: (err) => toast.error(getApiError(err)),
   });

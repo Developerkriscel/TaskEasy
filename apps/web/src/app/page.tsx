@@ -17,12 +17,13 @@ export default function LandingPage() {
   const { isAuthenticated: isPlatformAuthenticated } = usePlatformAuthStore();
 
   useEffect(() => {
+    document.documentElement.classList.remove('dark');
     if (isAuthenticated) router.replace('/dashboard');
     if (isPlatformAuthenticated) router.replace('/platform/dashboard');
   }, [isAuthenticated, isPlatformAuthenticated, router]);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen bg-white">
       <PublicNavbar />
       <main>
         <HeroSection />
