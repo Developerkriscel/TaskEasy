@@ -59,7 +59,7 @@ export function FileUpload({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const publish = (files: UploadedFile[]) => {
-    onChange(files.map((f) => f.result.publicId));
+    onChange(files.map((f) => f.result.id));
   };
 
   const currentTotalSize = uploaded.reduce((sum, f) => sum + f.result.size, 0);

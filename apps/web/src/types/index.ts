@@ -415,6 +415,7 @@ export interface HierarchyGroup {
 // ─── Upload ───────────────────────────────────────────────────────────────────
 
 export interface UploadResult {
+  id: string;
   publicId: string;
   url: string;
   secureUrl: string;

@@ -9,6 +9,7 @@ import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { PrismaService } from '../../prisma/prisma.service';
 
 export interface UploadResult {
+  id: string;
   publicId: string;
   url: string;
   secureUrl: string;
@@ -56,7 +57,7 @@ export class UploadsService {
     });
 
     // Store in Attachments table
-    await this.prisma.attachment.create({
+    const attachment = await this.prisma.attachment.create({
       data: {
         tenantId,
         publicId: result.public_id,
@@ -71,6 +72,7 @@ export class UploadsService {
     });
 
     return {
+      id: attachment.id,
       publicId: result.public_id,
       url: result.url,
       secureUrl: result.secure_url,
