@@ -209,6 +209,14 @@ export interface ChecklistTask {
 
 export type ApprovalItemType = 'DELEGATION' | 'WORK_REQUEST' | 'CHECKLIST';
 
+export interface AttachmentInfo {
+  id: string;
+  url: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+}
+
 export interface ApprovalQueueItem {
   id: string;
   type: ApprovalItemType;
@@ -219,6 +227,7 @@ export interface ApprovalQueueItem {
   submittedAt?: string | null;
   doerRemarks?: string | null;
   doerAttachmentIds?: string[];
+  doerAttachments?: AttachmentInfo[];
   targetDate?: string;
   reworkCount?: number;
   priority?: string;

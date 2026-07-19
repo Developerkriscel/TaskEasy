@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, GitPullRequest, XCircle, FileSpreadsheet, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, FileSpreadsheet, FileText, Paperclip } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { approvalApi, checklistApi, delegationApi, workRequestApi } from '@/lib/api';
 import { getApiError } from '@/lib/axios';
@@ -321,6 +321,32 @@ export default function ApprovalsPage() {
             <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
               Task: <strong>{actionItem?.title}</strong>
             </p>
+            {actionItem?.doerRemarks && (
+              <div className="mb-3 rounded-lg bg-surface-muted p-3">
+                <p className="text-xs font-medium text-muted-foreground mb-1">Submission Remarks</p>
+                <p className="text-sm text-foreground">{actionItem.doerRemarks}</p>
+              </div>
+            )}
+            {actionItem?.doerAttachments && actionItem.doerAttachments.length > 0 && (
+              <div className="mb-3 space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  <Paperclip className="h-3.5 w-3.5" /> Attachments ({actionItem.doerAttachments.length})
+                </p>
+                {actionItem.doerAttachments.map((att) => (
+                  <a
+                    key={att.id}
+                    href={att.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm hover:bg-surface-muted transition-colors"
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="flex-1 truncate text-foreground">{att.originalName}</span>
+                    <span className="text-xs text-primary font-medium flex-shrink-0">View</span>
+                  </a>
+                ))}
+              </div>
+            )}
             {actionType === 'approve' ? (
               <Textarea
                 label="Final Remarks (optional)"

@@ -3,6 +3,14 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { HierarchyService } from '../hierarchy/hierarchy.service';
 import { isTenantWideRole } from '../../common/utils/role.utils';
 
+export interface AttachmentInfo {
+  id: string;
+  url: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+}
+
 export interface ApprovalItem {
   id: string;
   type: 'DELEGATION' | 'WORK_REQUEST' | 'CHECKLIST';
@@ -13,6 +21,7 @@ export interface ApprovalItem {
   submittedAt: Date | null;
   doerRemarks: string | null;
   doerAttachmentIds: string[];
+  doerAttachments: AttachmentInfo[];
   targetDate: Date;
   reworkCount: number;
   priority?: string;
@@ -99,6 +108,7 @@ export class ApprovalService {
         submittedAt: d.submittedAt,
         doerRemarks: d.doerRemarks,
         doerAttachmentIds: d.doerAttachmentIds,
+        doerAttachments: [],
         targetDate: d.targetDate,
         reworkCount: d.reworkCount,
         priority: d.priority,
@@ -114,6 +124,7 @@ export class ApprovalService {
         submittedAt: w.submittedAt,
         doerRemarks: w.doerRemarks,
         doerAttachmentIds: w.doerAttachmentIds,
+        doerAttachments: [],
         targetDate: w.deadlineDate,
         reworkCount: w.reworkCount,
         projectName: w.project?.name,
@@ -128,6 +139,7 @@ export class ApprovalService {
         submittedAt: c.actualDate,
         doerRemarks: c.remarks,
         doerAttachmentIds: c.attachmentIds,
+        doerAttachments: [],
         targetDate: c.plannedDate,
         reworkCount: 0,
         projectName: c.project?.name,
@@ -139,6 +151,23 @@ export class ApprovalService {
       if (!b.submittedAt) return -1;
       return a.submittedAt.getTime() - b.submittedAt.getTime();
     });
+
+    const allAttachmentIds = items.flatMap((i) => i.doerAttachmentIds).filter(Boolean);
+    const attachmentMap = new Map<string, AttachmentInfo>();
+    if (allAttachmentIds.length > 0) {
+      const attachments = await this.prisma.attachment.findMany({
+        where: { id: { in: allAttachmentIds } },
+        select: { id: true, url: true, originalName: true, mimeType: true, size: true },
+      });
+      for (const a of attachments) {
+        attachmentMap.set(a.id, a);
+      }
+    }
+    for (const item of items) {
+      item.doerAttachments = item.doerAttachmentIds
+        .map((id) => attachmentMap.get(id))
+        .filter(Boolean) as AttachmentInfo[];
+    }
 
     return { data: items, total: items.length };
   }
