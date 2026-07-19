@@ -175,8 +175,8 @@ export function Header({ onToggleSidebar }: HeaderProps) {
 
         {/* Right actions */}
         <div className="flex items-center gap-2">
-          {/* Quick add */}
-          <div ref={quickRef} className="relative">
+          {/* Quick add — hidden for employees */}
+          {['ADMIN', 'MANAGER', 'COMPANY_OWNER', 'SAAS_OWNER'].includes(String(user?.role ?? '').toUpperCase()) && <div ref={quickRef} className="relative">
             <button
               onClick={() => setQuickOpen((o) => !o)}
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-contrast transition-colors duration-100 hover:bg-primary/90"
@@ -257,7 +257,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div>}
 
           {/* Refresh */}
           <button onClick={() => window.location.reload()} className={iconBtn} aria-label="Refresh page" title="Refresh page">
