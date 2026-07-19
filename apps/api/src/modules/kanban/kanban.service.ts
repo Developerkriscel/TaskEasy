@@ -59,6 +59,7 @@ export class KanbanService {
     tenantId: string,
     userId: string,
     role: string,
+    remarks?: string,
   ) {
     const task = await this.prisma.delegationTask.findFirst({ where: { id: taskId, tenantId } });
     if (!task) throw new NotFoundException('Task not found');
@@ -71,15 +72,16 @@ export class KanbanService {
     const allowedTargets = ALLOWED_MOVES[task.status] ?? [];
     if (!allowedTargets.includes(toStatus)) {
       throw new BadRequestException(
-        `Can't move a task from ${task.status} to ${toStatus} on the Kanban board. ` +
-        `Use the Delegation "Done" button to submit for approval, or the Approve/Review ` +
-        `screen to approve/rework/complete it.`,
+        `Can't move from ${task.status} to ${toStatus}`,
       );
     }
 
+    const data: any = { status: toStatus };
+    if (remarks) data.doerRemarks = remarks;
+
     const updated = await this.prisma.delegationTask.update({
       where: { id: taskId },
-      data: { status: toStatus as any },
+      data,
     });
 
     // BE-04 fix: dashboard counts key off task status; invalidate after moves.

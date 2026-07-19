@@ -7,6 +7,9 @@ import { Kanban, X, ChevronRight, User, Calendar, Flag, AlertCircle } from 'luci
 import toast from 'react-hot-toast';
 import { cn, formatDate, isOverdue } from '@/lib/utils';
 import { StatusBadge, PriorityBadge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
+import { Textarea } from '@/components/ui/Input';
 import { useActiveProjects } from '@/hooks/useProjects';
 import { apiGet, apiPatch } from '@/lib/axios';
 import type { DelegationTask } from '@/types';
@@ -240,6 +243,8 @@ export default function KanbanPage() {
   const [draggedStatus, setDraggedStatus] = useState<Col | null>(null);
   const [overCol, setOverCol] = useState<Col | null>(null);
   const [selectedTask, setSelectedTask] = useState<DelegationTask | null>(null);
+  const [pendingMove, setPendingMove] = useState<{ taskId: string; from: Col; to: Col } | null>(null);
+  const [moveRemarks, setMoveRemarks] = useState('');
 
   const { data: board, isLoading } = useQuery({
     queryKey: ['kanban', projectFilter],
@@ -252,12 +257,14 @@ export default function KanbanPage() {
   });
 
   const moveMutation = useMutation({
-    mutationFn: ({ taskId, status }: { taskId: string; status: string }) =>
-      apiPatch(`/kanban/tasks/${taskId}/move`, { status }),
+    mutationFn: ({ taskId, status, remarks }: { taskId: string; status: string; remarks?: string }) =>
+      apiPatch(`/kanban/tasks/${taskId}/move`, { status, remarks: remarks || undefined }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['kanban'] });
       qc.invalidateQueries({ queryKey: ['delegation'] });
       toast.success('Task moved');
+      setPendingMove(null);
+      setMoveRemarks('');
     },
     onError: () => toast.error('Could not move task'),
   });
@@ -280,11 +287,21 @@ export default function KanbanPage() {
       setOverCol(null);
       return;
     }
-    moveMutation.mutate({ taskId: draggedId, status: col });
+    setPendingMove({ taskId: draggedId, from: draggedStatus, to: col });
+    setMoveRemarks('');
     setDraggedId(null);
     setDraggedStatus(null);
     setOverCol(null);
-  }, [draggedId, draggedStatus, moveMutation]);
+  }, [draggedId, draggedStatus]);
+
+  const confirmMove = (withRemarks: boolean) => {
+    if (!pendingMove) return;
+    moveMutation.mutate({
+      taskId: pendingMove.taskId,
+      status: pendingMove.to,
+      remarks: withRemarks ? moveRemarks : undefined,
+    });
+  };
 
   const canDropInto = (col: Col) =>
     draggedStatus ? ALLOWED_MOVES[draggedStatus].includes(col) : false;
@@ -336,6 +353,47 @@ export default function KanbanPage() {
       {selectedTask && (
         <TaskModal task={selectedTask} onClose={() => setSelectedTask(null)} />
       )}
+
+      {/* Move remarks modal */}
+      <Modal
+        open={!!pendingMove}
+        onClose={() => setPendingMove(null)}
+        title="Move Task"
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setPendingMove(null)}>Cancel</Button>
+            <Button
+              variant="secondary"
+              onClick={() => confirmMove(false)}
+              loading={moveMutation.isPending}
+            >
+              Skip
+            </Button>
+            <Button
+              onClick={() => confirmMove(true)}
+              loading={moveMutation.isPending}
+            >
+              Move
+            </Button>
+          </>
+        }
+      >
+        {pendingMove && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Moving from <strong className="text-foreground">{COL_META[pendingMove.from].label}</strong> to <strong className="text-foreground">{COL_META[pendingMove.to].label}</strong>
+            </p>
+            <Textarea
+              label="Remarks (optional)"
+              value={moveRemarks}
+              onChange={(e) => setMoveRemarks(e.target.value)}
+              placeholder="Add a note about this move…"
+              rows={3}
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -24,8 +24,9 @@ export class KanbanController {
   moveCard(
     @Param('taskId') taskId: string,
     @Body('status') status: string,
+    @Body('remarks') remarks: string,
     @CurrentUser() user: JwtPayload,
   ) {
-    return this.kanbanService.moveCard(taskId, status, user.tenantId, user.sub, user.role);
+    return this.kanbanService.moveCard(taskId, status, user.tenantId, user.sub, user.role, remarks);
   }
 }
