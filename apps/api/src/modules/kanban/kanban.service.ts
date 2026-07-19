@@ -7,20 +7,12 @@ import { CachePatterns } from '../../common/utils/cache-keys.utils';
 
 const KANBAN_COLUMNS = ['PENDING', 'IN_PROGRESS', 'SEND_FOR_APPROVAL', 'REWORK', 'COMPLETED'] as const;
 
-// Kanban drag-and-drop only ever performs these self-service, no-side-effect
-// transitions for the task's own assignee. Anything that requires mandatory
-// remarks, an approver's judgment, or scoring side effects (submit, approve,
-// rework, complete) MUST go through DelegationService's own endpoints —
-// those already collect the required remarks, check who's allowed to act,
-// fire notifications, and update onTimeStatus/delayDays/MIS caches. Letting
-// Kanban shortcut around that was exactly the "approval bypass" risk this
-// project's own notes flagged as a top-priority fix elsewhere.
 const ALLOWED_MOVES: Record<string, string[]> = {
-  PENDING: ['IN_PROGRESS'],
-  IN_PROGRESS: ['PENDING'],
-  SEND_FOR_APPROVAL: [],
-  REWORK: [],
-  COMPLETED: [],
+  PENDING: ['IN_PROGRESS', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  IN_PROGRESS: ['PENDING', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  SEND_FOR_APPROVAL: ['PENDING', 'IN_PROGRESS', 'REWORK', 'COMPLETED'],
+  REWORK: ['PENDING', 'IN_PROGRESS', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  COMPLETED: ['PENDING', 'IN_PROGRESS'],
 };
 
 @Injectable()

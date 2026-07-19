@@ -25,18 +25,12 @@ const COL_META: Record<Col, { label: string; color: string; dot: string }> = {
   COMPLETED:         { label: 'Completed',    color: 'border-t-green-500',  dot: 'bg-green-500' },
 };
 
-// Allowed transitions (can't drag to arbitrary states). Must match
-// KanbanService's ALLOWED_MOVES on the backend exactly. Submitting for
-// approval, sending for rework, and completing all require mandatory
-// remarks and/or approver judgment that a drag-and-drop can't collect —
-// those go through the Delegation "Done" button and the Approve/Review
-// screen instead, which already handle that correctly.
 const ALLOWED_MOVES: Record<Col, Col[]> = {
-  PENDING:           ['IN_PROGRESS'],
-  IN_PROGRESS:       ['PENDING'],
-  SEND_FOR_APPROVAL: [],
-  REWORK:            [],
-  COMPLETED:         [],
+  PENDING:           ['IN_PROGRESS', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  IN_PROGRESS:       ['PENDING', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  SEND_FOR_APPROVAL: ['PENDING', 'IN_PROGRESS', 'REWORK', 'COMPLETED'],
+  REWORK:            ['PENDING', 'IN_PROGRESS', 'SEND_FOR_APPROVAL', 'COMPLETED'],
+  COMPLETED:         ['PENDING', 'IN_PROGRESS'],
 };
 
 // ── Card detail modal ─────────────────────────────────────────────────────────
